@@ -1,0 +1,3 @@
+Source: https://github.com/google/language-resources/tree/master/bn (archived 2022-11-05)
+Files copied unmodified on 2026-10-06. Licence: CC BY 4.0 (see LICENSE).
+Commit: a90601024f07ab7e96c911243324e0adeb16da96
