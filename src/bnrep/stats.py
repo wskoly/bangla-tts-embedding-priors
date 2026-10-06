@@ -82,7 +82,9 @@ def main() -> int:
         bpe = AutoTokenizer.from_pretrained(args.bpe)
 
     word_types = sorted({t for c in canon.values() for t in tokens(c) if is_bengali(t)})
-    lex_words = list(load_lexicon()[0])
+    # single-token, Bengali-only keys: hyphenated compounds and Latin entries would be split /
+    # re-predicted by `convert`, which would contaminate the collision metric
+    lex_words = [w for w in load_lexicon()[0] if is_bengali(w)]
     n_word_tokens = sum(1 for c in canon.values() for t in tokens(c) if is_bengali(t))
 
     def mapping(rep: str, ws: list[str]) -> dict[str, set[str]]:
