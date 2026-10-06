@@ -1,0 +1,52 @@
+{
+  "rep": "LAT-G-iso",
+  "version": "v1",
+  "file": "configs/vocab/LAT-G-iso_v1.txt",
+  "sha256": "b683c138ad1a2aded4ccd7a620978d09a7f4ebc0150b24b3354d5eb9cd80df34",
+  "original_vocab_size": 2545,
+  "final_vocab_size": 2548,
+  "added_symbols": [
+    {
+      "symbol": "̐",
+      "codepoint": "U+0310",
+      "name": "COMBINING CANDRABINDU"
+    },
+    {
+      "symbol": "̥",
+      "codepoint": "U+0325",
+      "name": "COMBINING RING BELOW"
+    },
+    {
+      "symbol": "ẏ",
+      "codepoint": "U+1E8F",
+      "name": "LATIN SMALL LETTER Y WITH DOT ABOVE"
+    }
+  ],
+  "n_new_embeddings": 3,
+  "embedding_dim": 512,
+  "embedding_rows": 2549,
+  "symbols_used": 41,
+  "symbols_used_from_base": 38,
+  "splits": {
+    "train_full": {
+      "utterances": 1568,
+      "tokens": 93737,
+      "unknown_symbols": 0
+    },
+    "val": {
+      "utterances": 50,
+      "tokens": 2754,
+      "unknown_symbols": 0
+    },
+    "test_seen": {
+      "utterances": 163,
+      "tokens": 9090,
+      "unknown_symbols": 0
+    },
+    "test_unseen": {
+      "utterances": 110,
+      "tokens": 6448,
+      "unknown_symbols": 0
+    }
+  }
+}

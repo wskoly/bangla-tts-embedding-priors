@@ -62,9 +62,16 @@ class ASR:
             self.proc = WhisperProcessor.from_pretrained(model_id)
             self.model = WhisperForConditionalGeneration.from_pretrained(
                 model_id, torch_dtype=torch.float16).to(device).eval()
+            if not hasattr(self.model.generation_config, "lang_to_id"):
+                # fine-tunes saved with an old generation config reject `language=`; use the base model's
+                from transformers import GenerationConfig
+                base = {"medium": "openai/whisper-medium", "small": "openai/whisper-small",
+                        "large": "openai/whisper-large-v2"}
+                size = next((k for k in base if k in model_id), "medium")
+                self.model.generation_config = GenerationConfig.from_pretrained(base[size])
         else:
-            from transformers import AutoModelForCTC, AutoProcessor
-            self.proc = AutoProcessor.from_pretrained(model_id)
+            from transformers import AutoModelForCTC, Wav2Vec2Processor
+            self.proc = Wav2Vec2Processor.from_pretrained(model_id)  # greedy CTC; no external LM decoder
             self.model = AutoModelForCTC.from_pretrained(model_id).to(device).eval()
 
     @torch.no_grad()
@@ -92,27 +99,37 @@ def utt_scores(ref: str, hyp: str) -> dict:
     wo = jiwer.process_words(r, h)
     c_err = co.substitutions + co.deletions + co.insertions
     w_err = wo.substitutions + wo.deletions + wo.insertions
+    # secondary (D-015b): space-insensitive CER; SLR37 writes case markers as separate words ("ইন্টেল এর")
+    # while ASRs join them, so word segmentation alone inflates CER/WER on real speech
+    r_ns, h_ns = r.replace(" ", ""), h.replace(" ", "")
+    cns = jiwer.process_characters(r_ns, h_ns) if h_ns else None
+    cns_err = (cns.substitutions + cns.deletions + cns.insertions) if cns else len(r_ns)
     return {"ref": r, "hyp": h, "c_err": c_err, "c_ref": len(r), "w_err": w_err, "w_ref": len(r.split()),
-            "cer": c_err / max(1, len(r)), "wer": w_err / max(1, len(r.split()))}
+            "cns_err": cns_err, "cns_ref": len(r_ns),
+            "cer": c_err / max(1, len(r)), "wer": w_err / max(1, len(r.split())),
+            "cer_nospace": cns_err / max(1, len(r_ns))}
 
 
 def corpus(rows: list[dict]) -> dict:
     return {"CER": 100 * sum(r["c_err"] for r in rows) / sum(r["c_ref"] for r in rows),
-            "WER": 100 * sum(r["w_err"] for r in rows) / sum(r["w_ref"] for r in rows)}
+            "WER": 100 * sum(r["w_err"] for r in rows) / sum(r["w_ref"] for r in rows),
+            "CER_nospace": 100 * sum(r["cns_err"] for r in rows) / sum(r["cns_ref"] for r in rows)}
 
 
 def bootstrap(rows: list[dict], n: int = 2000) -> dict:
     rng = random.Random(SEED)
-    cer, wer = [], []
+    cer, wer, cns = [], [], []
     for _ in range(n):
         m = corpus([rows[rng.randrange(len(rows))] for _ in rows])
         cer.append(m["CER"])
         wer.append(m["WER"])
+        cns.append(m["CER_nospace"])
 
     def q(v, p):
         return sorted(v)[int(p * (len(v) - 1))]
 
-    return {"CER_ci95": (q(cer, .025), q(cer, .975)), "WER_ci95": (q(wer, .025), q(wer, .975))}
+    return {"CER_ci95": (q(cer, .025), q(cer, .975)), "WER_ci95": (q(wer, .025), q(wer, .975)),
+            "CER_nospace_ci95": (q(cns, .025), q(cns, .975))}
 
 
 def main() -> int:
@@ -155,11 +172,13 @@ def main() -> int:
     lines = ["# ASR noise floor on real SLR37 audio", "",
              "Scoring normalization fixed in advance (see `src/eval/asr.py`, D-015). "
              "Corpus CER/WER = ratio of summed errors; 95 % CI = utterance bootstrap (2,000 resamples).", "",
-             "| model | split | n | CER % [95 % CI] | WER % [95 % CI] | utt CER mean / median / p90 | "
-             "utt WER mean / median | % utts CER=0 | hyps with digits |", "|---|---|---|---|---|---|---|---|---|"]
+             "| model | split | n | CER % [95 % CI] | CER no-space % [95 % CI] | WER % [95 % CI] | "
+             "utt CER mean / median / p90 | utt WER mean / median | % utts CER=0 | hyps with digits |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for tag, s in summary.items():
         m, sp = tag.split("__")
         lines.append(f"| {m} | {sp} | {s['n']} | {s['CER']:.2f} [{s['CER_ci95'][0]:.2f}, {s['CER_ci95'][1]:.2f}] | "
+                     f"{s['CER_nospace']:.2f} [{s['CER_nospace_ci95'][0]:.2f}, {s['CER_nospace_ci95'][1]:.2f}] | "
                      f"{s['WER']:.2f} [{s['WER_ci95'][0]:.2f}, {s['WER_ci95'][1]:.2f}] | "
                      f"{s['utt_cer_mean']:.2f} / {s['utt_cer_median']:.2f} / {s['utt_cer_p90']:.2f} | "
                      f"{s['utt_wer_mean']:.2f} / {s['utt_wer_median']:.2f} | {s['pct_utt_cer_zero']:.1f} | "

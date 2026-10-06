@@ -1,0 +1,36 @@
+{
+  "rep": "LAT-G-colloq",
+  "version": "v1",
+  "file": "configs/vocab/LAT-G-colloq_v1.txt",
+  "sha256": "4e173934be56219eb38759fa8d4c48132d5a34454f0c44abce409bcf6a07ec46",
+  "original_vocab_size": 2545,
+  "final_vocab_size": 2545,
+  "added_symbols": [],
+  "n_new_embeddings": 0,
+  "embedding_dim": 512,
+  "embedding_rows": 2546,
+  "symbols_used": 24,
+  "symbols_used_from_base": 24,
+  "splits": {
+    "train_full": {
+      "utterances": 1568,
+      "tokens": 96443,
+      "unknown_symbols": 0
+    },
+    "val": {
+      "utterances": 50,
+      "tokens": 2851,
+      "unknown_symbols": 0
+    },
+    "test_seen": {
+      "utterances": 163,
+      "tokens": 9332,
+      "unknown_symbols": 0
+    },
+    "test_unseen": {
+      "utterances": 110,
+      "tokens": 6619,
+      "unknown_symbols": 0
+    }
+  }
+}

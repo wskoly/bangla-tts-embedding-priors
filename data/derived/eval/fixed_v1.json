@@ -1,0 +1,63 @@
+{
+  "fixed_v1_sha256": "73c70748f4cf17eca85c4278c6847a50ef09aecea121fe76b28b968b24d9672d",
+  "refs_v1_sha256": "df695daa3a235e506f663a92652bd86473d4545f93e5f5931c6e99f0e728d6ad",
+  "n_seen": 40,
+  "n_unseen": 10,
+  "seed": "20261006",
+  "quotas_seen": [
+    [
+      "supplement_word",
+      6
+    ],
+    [
+      "number",
+      5
+    ],
+    [
+      "conjunct_heavy",
+      6
+    ],
+    [
+      "aspirate_heavy",
+      5
+    ],
+    [
+      "retroflex_heavy",
+      4
+    ],
+    [
+      "nasal",
+      4
+    ],
+    [
+      "long",
+      2
+    ],
+    [
+      "ordinary",
+      8
+    ]
+  ],
+  "quotas_unseen": [
+    [
+      "supplement_word",
+      2
+    ],
+    [
+      "number",
+      2
+    ],
+    [
+      "conjunct_heavy",
+      2
+    ],
+    [
+      "aspirate_heavy",
+      2
+    ],
+    [
+      "ordinary",
+      2
+    ]
+  ]
+}

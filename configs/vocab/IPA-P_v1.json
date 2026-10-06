@@ -1,0 +1,57 @@
+{
+  "rep": "IPA-P",
+  "version": "v1",
+  "file": "configs/vocab/IPA-P_v1.txt",
+  "sha256": "55b560072d8d93e85a7af536eac9e400e6944559cd6853f25a10ca03a9e07bd2",
+  "original_vocab_size": 2545,
+  "final_vocab_size": 2549,
+  "added_symbols": [
+    {
+      "symbol": "ɖ",
+      "codepoint": "U+0256",
+      "name": "LATIN SMALL LETTER D WITH TAIL"
+    },
+    {
+      "symbol": "ɟ",
+      "codepoint": "U+025F",
+      "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE"
+    },
+    {
+      "symbol": "ʈ",
+      "codepoint": "U+0288",
+      "name": "LATIN SMALL LETTER T WITH RETROFLEX HOOK"
+    },
+    {
+      "symbol": "̯",
+      "codepoint": "U+032F",
+      "name": "COMBINING INVERTED BREVE BELOW"
+    }
+  ],
+  "n_new_embeddings": 4,
+  "embedding_dim": 512,
+  "embedding_rows": 2550,
+  "symbols_used": 32,
+  "symbols_used_from_base": 28,
+  "splits": {
+    "train_full": {
+      "utterances": 1568,
+      "tokens": 84566,
+      "unknown_symbols": 0
+    },
+    "val": {
+      "utterances": 50,
+      "tokens": 2500,
+      "unknown_symbols": 0
+    },
+    "test_seen": {
+      "utterances": 163,
+      "tokens": 8190,
+      "unknown_symbols": 0
+    },
+    "test_unseen": {
+      "utterances": 110,
+      "tokens": 5836,
+      "unknown_symbols": 0
+    }
+  }
+}
