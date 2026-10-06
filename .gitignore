@@ -1,0 +1,11 @@
+# data and artifacts (large / regenerable)
+data/raw/
+data/derived/**/*.wav
+runs/
+*.ckpt
+*.pt
+*.safetensors
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
