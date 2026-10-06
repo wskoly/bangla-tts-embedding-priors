@@ -2,19 +2,19 @@
   "reps": {
     "BN-G": {
       "chars_per_utt": {
-        "mean": 51.47911158117398,
+        "mean": 51.483342147012166,
         "median": 45,
         "p95": 103,
         "max": 197
       },
       "chars_per_word": {
-        "mean": 5.445700181865419,
+        "mean": 5.446219797349961,
         "median": 5,
         "p95": 10,
         "max": 17
       },
       "chars_per_speech_sec": {
-        "mean": 14.415908633332714,
+        "mean": 14.416765589502644,
         "median": 14.58201841251877,
         "p95": 18.450184501845015,
         "max": 23.63321254135813
@@ -81,37 +81,37 @@
         "্",
         "ৎ"
       ],
-      "pct_chars_new_embedding": 85.62564845347057,
-      "pct_non_ascii": 85.62564845347057,
+      "pct_chars_new_embedding": 85.62682964408607,
+      "pct_non_ascii": 85.62682964408607,
       "pct_word_tokens_g2p_filled": 0.0,
-      "slr37_types": 3677,
+      "slr37_types": 3664,
       "slr37_type_collisions": 0,
       "lexicon_type_collisions": 0,
       "lexicon_collision_examples": [],
       "bpe_tokens_per_utt": {
-        "mean": 54.95928080380751,
+        "mean": 54.9613960867266,
         "median": 49,
         "p95": 111,
         "max": 210
       },
-      "bpe_tokens_per_word": 6.965633588577618,
-      "bpe_chars_per_token": 0.9366773150642753
+      "bpe_tokens_per_word": 6.965653359317829,
+      "bpe_chars_per_token": 0.9367182388484778
     },
     "LAT-G-det": {
       "chars_per_utt": {
-        "mean": 61.06028556319408,
+        "mean": 61.06874669487044,
         "median": 56,
         "p95": 122,
         "max": 227
       },
       "chars_per_word": {
-        "mean": 6.622499350480644,
+        "mean": 6.623538581449727,
         "median": 6,
         "p95": 12,
         "max": 18
       },
       "chars_per_speech_sec": {
-        "mean": 17.102391411551654,
+        "mean": 17.104191472159172,
         "median": 17.417464967144326,
         "p95": 21.418454416692573,
         "max": 28.359855049629754
@@ -121,8 +121,8 @@
       "pct_chars_new_embedding": 0.0,
       "pct_non_ascii": 0.0,
       "pct_word_tokens_g2p_filled": 0.0,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 3,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 1,
       "lexicon_type_collisions": 64,
       "lexicon_collision_examples": [
         [
@@ -147,29 +147,29 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 26.93865679534638,
+        "mean": 26.946589106292965,
         "median": 25,
         "p95": 53,
         "max": 96
       },
-      "bpe_tokens_per_word": 3.4609396897717057,
-      "bpe_chars_per_token": 2.2666418012995426
+      "bpe_tokens_per_word": 3.4618353880186343,
+      "bpe_chars_per_token": 2.2662885626815292
     },
     "LAT-G-iso": {
       "chars_per_utt": {
-        "mean": 59.23532522474881,
+        "mean": 59.2432575356954,
         "median": 54,
         "p95": 116,
         "max": 222
       },
       "chars_per_word": {
-        "mean": 6.398350220836581,
+        "mean": 6.399324499870096,
         "median": 6,
         "p95": 11,
         "max": 18
       },
       "chars_per_speech_sec": {
-        "mean": 16.600557553180572,
+        "mean": 16.60227413379223,
         "median": 16.894993939839125,
         "p95": 20.727536532283136,
         "max": 28.359855049629754
@@ -180,11 +180,11 @@
         "̥",
         "ẏ"
       ],
-      "pct_chars_new_embedding": 1.7024657632081703,
-      "pct_non_ascii": 24.14787437284625,
+      "pct_chars_new_embedding": 1.70223781342331,
+      "pct_non_ascii": 24.15088950182542,
       "pct_word_tokens_g2p_filled": 0.0,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 3,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 1,
       "lexicon_type_collisions": 64,
       "lexicon_collision_examples": [
         [
@@ -209,29 +209,29 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 36.500264410364885,
+        "mean": 36.5018508725542,
         "median": 32,
         "p95": 74,
         "max": 129
       },
-      "bpe_tokens_per_word": 4.635340406612074,
-      "bpe_chars_per_token": 1.6228738663034974
+      "bpe_tokens_per_word": 4.635212748542773,
+      "bpe_chars_per_token": 1.6230206446939515
     },
     "LAT-G-colloq": {
       "chars_per_utt": {
-        "mean": 60.9344262295082,
+        "mean": 60.94394500264411,
         "median": 55,
         "p95": 120,
         "max": 227
       },
       "chars_per_word": {
-        "mean": 6.607040789815536,
+        "mean": 6.608209924655755,
         "median": 6,
         "p95": 12,
         "max": 18
       },
       "chars_per_speech_sec": {
-        "mean": 17.061152365236513,
+        "mean": 17.06342625684301,
         "median": 17.326732673267337,
         "p95": 21.398253060651772,
         "max": 28.359855049629754
@@ -241,8 +241,8 @@
       "pct_chars_new_embedding": 0.0,
       "pct_non_ascii": 0.0,
       "pct_word_tokens_g2p_filled": 0.0,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 120,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 115,
       "lexicon_type_collisions": 5155,
       "lexicon_collision_examples": [
         [
@@ -268,29 +268,29 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 22.057641459545213,
+        "mean": 22.06081438392385,
         "median": 20,
         "p95": 44,
         "max": 83
       },
-      "bpe_tokens_per_word": 2.794279989349702,
-      "bpe_chars_per_token": 2.7625086907530387
+      "bpe_tokens_per_word": 2.794765504774403,
+      "bpe_chars_per_token": 2.762542848239327
     },
     "LAT-uroman": {
       "chars_per_utt": {
-        "mean": 68.68482284505552,
+        "mean": 68.70015864621894,
         "median": 62,
         "p95": 136,
         "max": 255
       },
       "chars_per_word": {
-        "mean": 7.558976357495453,
+        "mean": 7.560859963626916,
         "median": 7,
         "p95": 13,
         "max": 22
       },
       "chars_per_speech_sec": {
-        "mean": 19.330533829267335,
+        "mean": 19.333754044904566,
         "median": 19.57713390759593,
         "p95": 24.50090744101633,
         "max": 31.914214591178908
@@ -300,8 +300,8 @@
       "pct_chars_new_embedding": 0.0,
       "pct_non_ascii": 0.0,
       "pct_word_tokens_g2p_filled": 0.0,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 7,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 5,
       "lexicon_type_collisions": 163,
       "lexicon_collision_examples": [
         [
@@ -326,30 +326,30 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 25.843469063987307,
+        "mean": 25.850343733474354,
         "median": 23,
         "p95": 50,
         "max": 93
       },
-      "bpe_tokens_per_word": 3.331876216848865,
-      "bpe_chars_per_token": 2.657724575404133
+      "bpe_tokens_per_word": 3.3325964124636074,
+      "bpe_chars_per_token": 2.6576110304195733
     },
     "LAT-P": {
       "chars_per_utt": {
-        "mean": 54.87625594923321,
+        "mean": 54.89264939185616,
         "median": 49,
         "p95": 109,
         "max": 203
       },
       "chars_per_word": {
-        "mean": 5.862951415952195,
+        "mean": 5.864964925954793,
         "median": 5,
         "p95": 11,
         "max": 18
       },
       "chars_per_speech_sec": {
-        "mean": 15.30371935982762,
-        "median": 15.517241379310345,
+        "mean": 15.307526473811087,
+        "median": 15.520801820405909,
         "p95": 19.070389662141007,
         "max": 22.97137890358229
       },
@@ -357,9 +357,9 @@
       "symbols_not_in_f5_vocab": [],
       "pct_chars_new_embedding": 0.0,
       "pct_non_ascii": 0.0,
-      "pct_word_tokens_g2p_filled": 3.72872547745875,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 108,
+      "pct_word_tokens_g2p_filled": 0.0,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 100,
       "lexicon_type_collisions": 3394,
       "lexicon_collision_examples": [
         [
@@ -385,30 +385,30 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 22.576414595452142,
+        "mean": 22.583289264939186,
         "median": 20,
         "p95": 46,
         "max": 85
       },
-      "bpe_tokens_per_word": 2.8492982689545694,
-      "bpe_chars_per_token": 2.4306895905556076
+      "bpe_tokens_per_word": 2.8499686651517644,
+      "bpe_chars_per_token": 2.43067556492214
     },
     "LAT-P-dots": {
       "chars_per_utt": {
-        "mean": 64.98307773664727,
+        "mean": 64.99682707562137,
         "median": 59,
         "p95": 131,
-        "max": 245
+        "max": 247
       },
       "chars_per_word": {
-        "mean": 7.104312808521694,
+        "mean": 7.106001558846454,
         "median": 7,
         "p95": 13,
         "max": 23
       },
       "chars_per_speech_sec": {
-        "mean": 18.144466083134308,
-        "median": 18.434878790671952,
+        "mean": 18.14709865773824,
+        "median": 18.43549671093979,
         "p95": 22.76454605536925,
         "max": 26.864154505191312
       },
@@ -416,36 +416,36 @@
       "symbols_not_in_f5_vocab": [],
       "pct_chars_new_embedding": 0.0,
       "pct_non_ascii": 0.0,
-      "pct_word_tokens_g2p_filled": 3.72872547745875,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 103,
+      "pct_word_tokens_g2p_filled": 0.0,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 96,
       "lexicon_type_collisions": null,
       "lexicon_collision_examples": [],
       "bpe_tokens_per_utt": {
-        "mean": 28.530936012691697,
+        "mean": 28.530407191961924,
         "median": 25,
         "p95": 57,
-        "max": 109
+        "max": 111
       },
-      "bpe_tokens_per_word": 3.6515158439207087,
-      "bpe_chars_per_token": 2.2776356761565837
+      "bpe_tokens_per_word": 3.651116293847006,
+      "bpe_chars_per_token": 2.2781598116809696
     },
     "IPA-P": {
       "chars_per_utt": {
-        "mean": 53.44420941300899,
+        "mean": 53.459545214172394,
         "median": 48,
         "p95": 106,
         "max": 198
       },
       "chars_per_word": {
-        "mean": 5.687061574434918,
+        "mean": 5.688945180566381,
         "median": 5,
         "p95": 10,
         "max": 16
       },
       "chars_per_speech_sec": {
-        "mean": 14.9388764863472,
-        "median": 15.175718849840255,
+        "mean": 14.942478691093097,
+        "median": 15.178191973772083,
         "p95": 18.57429718875502,
         "max": 22.624434389140273
       },
@@ -456,11 +456,11 @@
         "ʈ",
         "̯"
       ],
-      "pct_chars_new_embedding": 6.174366484272187,
-      "pct_non_ascii": 17.154646111831234,
-      "pct_word_tokens_g2p_filled": 3.72872547745875,
-      "slr37_types": 3677,
-      "slr37_type_collisions": 108,
+      "pct_chars_new_embedding": 6.1983144066790645,
+      "pct_non_ascii": 17.171487358050094,
+      "pct_word_tokens_g2p_filled": 0.0,
+      "slr37_types": 3664,
+      "slr37_type_collisions": 100,
       "lexicon_type_collisions": 3394,
       "lexicon_collision_examples": [
         [
@@ -486,25 +486,25 @@
         ]
       ],
       "bpe_tokens_per_utt": {
-        "mean": 29.747223691168696,
+        "mean": 29.769962982548915,
         "median": 26,
         "p95": 61,
         "max": 112
       },
-      "bpe_tokens_per_word": 3.755086606010416,
-      "bpe_chars_per_token": 1.7966116760292967
+      "bpe_tokens_per_word": 3.758006815745414,
+      "bpe_chars_per_token": 1.7957545075051071
     }
   },
   "phenomena_totals": {
     "words": 15394,
-    "conjunct_viramas": 5368,
+    "conjunct_viramas": 5369,
     "aspirate_letters": 3470,
-    "retroflex_letters": 3427,
-    "dental_letters": 9960,
+    "retroflex_letters": 3441,
+    "dental_letters": 9962,
     "chandrabindu": 256,
     "anusvara": 644,
-    "visarga": 52,
+    "visarga": 48,
     "khanda_ta": 55,
-    "lexicon_oov_words": 574
+    "lexicon_oov_words": 546
   }
 }

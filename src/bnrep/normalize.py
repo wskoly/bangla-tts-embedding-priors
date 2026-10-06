@@ -14,7 +14,10 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from functools import lru_cache
+from pathlib import Path
 
+CORRECTIONS_FILE = Path(__file__).resolve().parents[2] / "data" / "curation" / "text_corrections_v1.tsv"
 ZW = "‌‍"
 DANDA = {"।": ".", "॥": "."}
 BENGALI_RE = re.compile(r"[ঀ-৿]+")
@@ -22,9 +25,25 @@ PUNCT_RE = re.compile(r"[.,!?;:]")
 TOKEN_RE = re.compile(r"[ঀ-৿]+|[^\sঀ-৿.,!?;:]+|[.,!?;:]")
 
 
-def normalize(text: str) -> str:
+@lru_cache(maxsize=1)
+def corrections() -> dict[str, str]:
+    """Audited transcript typo fixes and abbreviation expansions (D-014), applied to every arm."""
+    if not CORRECTIONS_FILE.exists():
+        return {}
+    table = {}
+    for line in CORRECTIONS_FILE.read_text(encoding="utf-8").splitlines()[1:]:
+        if line.strip():
+            orig, corrected, _ = line.split("\t")
+            table[normalize_word(orig)] = normalize_word(corrected)
+    return table
+
+
+def normalize(text: str, apply_corrections: bool = True) -> str:
     t = unicodedata.normalize("NFC", text)
     t = "".join(ch for ch in t if ch not in ZW)
+    if apply_corrections:
+        table = corrections()
+        t = BENGALI_RE.sub(lambda m: table.get(m.group(0), m.group(0)), t)
     for k, v in DANDA.items():
         t = t.replace(k, v)
     t = re.sub(r"\s+", " ", t).strip()

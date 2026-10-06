@@ -48,5 +48,43 @@ def phoneme_to_ipa() -> dict[str, str]:
     return table
 
 
-def lookup(word: str) -> Pron | None:
-    return load_lexicon()[0].get(normalize_word(word))
+SUPPLEMENT_FILE = ROOT / "data" / "curation" / "lexicon_supplement_v1.tsv"
+
+
+@lru_cache(maxsize=1)
+def load_supplement() -> dict[str, Pron]:
+    """Audited pronunciations for SLR37 words missing from the Google lexicon (D-014)."""
+    if not SUPPLEMENT_FILE.exists():
+        return {}
+    supp = {}
+    for line in SUPPLEMENT_FILE.read_text(encoding="utf-8").splitlines():
+        if line.strip() and not line.startswith("#"):
+            w, p, _src = line.split("\t")
+            supp[normalize_word(w)] = parse_pron(p)
+    return supp
+
+
+def compound_lookup(word: str, table: dict[str, Pron], min_part: int = 2) -> Pron | None:
+    """Two-part compound fallback: split into two dictionary words, preferring the longest first part.
+
+    Targets the dominant systematic G2P v1 error class (compounds whose parts are known, D-014).
+    """
+    w = normalize_word(word)
+    for i in range(len(w) - min_part, min_part - 1, -1):
+        left, right = w[:i], w[i:]
+        if left in table and right in table and not right.startswith("্") and not _is_dependent(right[0]):
+            return table[left] + table[right]
+    return None
+
+
+def _is_dependent(ch: str) -> bool:
+    # vowel signs, virama, nukta, candrabindu/anusvara/visarga cannot start a word
+    return 0x09BC <= ord(ch) <= 0x09D7 or ch in "ঁংঃ"
+
+
+def lookup(word: str, use_supplement: bool = True) -> Pron | None:
+    w = normalize_word(word)
+    pron = load_lexicon()[0].get(w)
+    if pron is None and use_supplement:
+        pron = load_supplement().get(w)
+    return pron

@@ -66,6 +66,27 @@ def test_oov_is_reported_not_silently_dropped():
     assert res.oov == ["ক্সযঝটঠ"] and OOV_MARK in res.text
 
 
+# ---------------------------------------------------------------- audit fixes (D-014)
+
+def test_transcript_corrections_apply_to_every_arm():
+    assert normalize("চৌমাথায় চট্রগ্রাম রাঙামাটি") == "চৌমাথায় চট্টগ্রাম রাঙামাটি"
+    assert normalize("মোঃ জিল্লুর") == "মোহাম্মদ জিল্লুর"
+    assert normalize("চট্রগ্রাম", apply_corrections=False) == "চট্রগ্রাম"
+    assert convert("BN-G", "চট্রগ্রাম").text == "চট্টগ্রাম"
+
+
+@pytest.mark.parametrize("word,expected", [
+    ("পদ্মা", "pOdda"), ("চট্রগ্রাম", "cOTTogram"), ("সফটব্যাংক", "sOfTbENk"), ("চৌদ্দ", "cou'ddo"),
+])
+def test_supplement_and_corrections_in_lat_p(word, expected):
+    assert convert("LAT-P", word).text == expected
+
+
+def test_slr37_needs_no_g2p_after_audit():
+    oov = [w for t in slr37_texts() for w in convert("LAT-P", t).oov]
+    assert oov == [], f"{len(oov)} SLR37 words still need G2P: {sorted(set(oov))[:10]}"
+
+
 # ---------------------------------------------------------------- corpus-level invariants
 
 @pytest.mark.parametrize("rep", LATIN_REPS)
