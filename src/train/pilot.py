@@ -28,7 +28,8 @@ from pathlib import Path
 import torch
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = json.loads((ROOT / "configs/pilot_v1_1.json").read_text(encoding="utf-8"))
+CONFIG_PATH = ROOT / os.environ.get("PILOT_CONFIG", "configs/pilot_v1_1.json")
+CONFIG = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 SMOKE = os.environ.get("PILOT_SMOKE") == "1"  # pipeline check only: tiny budget, separate run dir, never reported
 if SMOKE:
     CONFIG = {**CONFIG, "version": CONFIG["version"] + "_smoke",
@@ -69,8 +70,29 @@ class StopTraining(Exception):
     pass
 
 
-def run_dir(rep: str, seed: int, subset: str) -> Path:
-    return ROOT / "runs" / CONFIG["version"] / f"{rep}__{subset}__s{seed}"
+def arm_spec(arm: str) -> dict:
+    """Arms are a list of representation ids (pilot_v1_1) or a dict arm -> {rep, init, reinit} (pilot_v2)."""
+    arms = CONFIG["arms"]
+    if isinstance(arms, list):
+        assert arm in arms, f"arm {arm!r} not in frozen config"
+        return {"rep": arm, "init": "official", "reinit": None}
+    assert arm in arms, f"arm {arm!r} not in frozen config"
+    return {"init": "official", "reinit": None, **arms[arm]}
+
+
+def reinit_rows_for(rep: str, vocab_map: dict[str, int], rule: str | None) -> list[int] | None:
+    """Embedding rows (vocab index + 1) to re-initialize. Rule 'used_except_space_punct': every symbol the arm's
+    text uses in any split, except space and '.', which BN-G also reuses from pretraining (D-028)."""
+    if not rule:
+        return None
+    assert rule == "used_except_space_punct", rule
+    from src.train.vocab import split_texts
+    used = {c for split in split_texts(rep).values() for t in split.values() for c in t}
+    return sorted(vocab_map[c] + 1 for c in used - {" ", "."})
+
+
+def run_dir(arm: str, seed: int, subset: str) -> Path:
+    return ROOT / "runs" / CONFIG["version"] / f"{arm}__{subset}__s{seed}"
 
 
 def micro_batches_per_epoch(durations: list[float], batch_frames: int, max_samples: int, seed: int) -> int:
@@ -97,13 +119,15 @@ def save_online_fp16(trainer, path: Path) -> None:
     save_file(sd, str(path))
 
 
-def train(rep: str, seed: int, subset: str) -> None:
+def train(arm: str, seed: int, subset: str) -> None:
+    spec = arm_spec(arm)
+    rep = spec["rep"]
     from f5_tts.model import CFM, DiT, Trainer
     from f5_tts.model.dataset import CustomDataset
 
     from src.train.f5_train import ARCH, MEL, build_dataset, expanded_checkpoint, load_vocab
     tc = CONFIG["train"]
-    out = run_dir(rep, seed, subset)
+    out = run_dir(arm, seed, subset)
     out.mkdir(parents=True, exist_ok=True)
     if (out / "train_done.json").exists():
         print(f"{out.name}: already trained")
@@ -111,7 +135,8 @@ def train(rep: str, seed: int, subset: str) -> None:
     torch.manual_seed(seed)
     vocab_map, vocab_path = load_vocab(rep)
     train_hf, durations = build_dataset(rep, subset, vocab_map)
-    ckpt = expanded_checkpoint(len(vocab_map), out)
+    reinit_rows = reinit_rows_for(rep, vocab_map, spec["reinit"])
+    ckpt = expanded_checkpoint(len(vocab_map), out, init=spec["init"], reinit_rows=reinit_rows)
     micro = micro_batches_per_epoch(durations, tc["batch_frames"], tc["max_samples"], seed)
     upe = math.ceil(micro / tc["grad_accum"])
     epochs = math.ceil(tc["updates"] / upe)
@@ -147,7 +172,8 @@ def train(rep: str, seed: int, subset: str) -> None:
 
     trainer.accelerator.backward = backward
     trainer.ema_model.update = ema_update
-    config = {"rep": rep, "seed": seed, "subset": subset, "pilot_config": CONFIG["version"],
+    config = {"arm": arm, "rep": rep, "init": spec["init"], "reinit_rule": spec["reinit"],
+              "n_reinit_rows": len(reinit_rows or []), "seed": seed, "subset": subset, "pilot_config": CONFIG["version"],
               "vocab_file": str(vocab_path), "vocab_size": len(vocab_map), "pretrained": str(ckpt),
               "micro_batches_per_epoch": micro, "updates_per_epoch": upe, "epochs": epochs,
               "schedule_total_updates": epochs * upe, "n_utts": len(durations),
@@ -178,10 +204,11 @@ def split_items(name: str, exclude: set[str]) -> list[dict]:
     return [{"utt_id": u, "speaker": man[u]["speaker"], "text": man[u]["text"]} for u in ids if u not in exclude]
 
 
-def evaluate(rep: str, seed: int, subset: str) -> None:
+def evaluate(arm: str, seed: int, subset: str) -> None:
+    rep = arm_spec(arm)["rep"]
     from src.eval.asr import ASR, bootstrap, corpus, load_audio_16k, utt_scores
     from src.infer.f5_infer import F5Synth, load_eval, synthesize_set
-    out = run_dir(rep, seed, subset)
+    out = run_dir(arm, seed, subset)
     done = json.loads((out / "train_done.json").read_text(encoding="utf-8"))
     ev = CONFIG["eval"]
     fixed, refs = load_eval("fixed_v1")
@@ -221,7 +248,7 @@ def evaluate(rep: str, seed: int, subset: str) -> None:
             results[f"{tag}|u{u}|{s}"] = {**corpus(rows), **bootstrap(rows), "n": len(rows)}
         del asr
         torch.cuda.empty_cache()
-    summary = {"rep": rep, "seed": seed, "subset": subset, "train": done, "results": results}
+    summary = {"arm": arm, "rep": rep, "seed": seed, "subset": subset, "train": done, "results": results}
     (out / "eval_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     for k, v in results.items():
         print(f"{k:62s} CER {v['CER']:6.2f} [{v['CER_ci95'][0]:.2f},{v['CER_ci95'][1]:.2f}]  "
@@ -231,12 +258,13 @@ def evaluate(rep: str, seed: int, subset: str) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["train", "eval"])
-    ap.add_argument("--rep", required=True)
+    ap.add_argument("--arm", "--rep", dest="arm", required=True)
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--subset", default=CONFIG["train_subset_pilot"])
     a = ap.parse_args()
-    assert a.rep in CONFIG["arms"] and a.seed in CONFIG["train"]["seeds"], "arm/seed not in frozen config"
-    (train if a.cmd == "train" else evaluate)(a.rep, a.seed, a.subset)
+    arm_spec(a.arm)  # asserts the arm is in the frozen config
+    assert a.seed in CONFIG["train"]["seeds"], "seed not in frozen config"
+    (train if a.cmd == "train" else evaluate)(a.arm, a.seed, a.subset)
     return 0
 
 

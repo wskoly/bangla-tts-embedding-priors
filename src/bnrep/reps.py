@@ -128,7 +128,21 @@ WORD_CONVERTERS: dict[str, Callable[[str], str]] = {
     "LAT-G-colloq": _lat_g_colloq,
     "LAT-uroman": _lat_uroman,
 }
+# LAT-P-rand control (D-028): fixed derangement of the full 27-symbol LAT-P alphabet (lexicon + supplement),
+# generated with random.Random(20261007), no fixed points. Same embedding rows, same length and same information
+# as LAT-P; only the sound-to-letter correspondence learned in pretraining is scrambled. Space / "." unchanged.
+LAT_P_RAND_MAP = {"'": "E", "-": "e", "D": "O", "E": "c", "N": "m", "O": "i", "T": "r", "a": "N", "b": "j",
+                  "c": "u", "d": "f", "e": "p", "f": "g", "g": "h", "h": "t", "i": "D", "j": "s", "k": "n",
+                  "l": "o", "m": "T", "n": "-", "o": "k", "p": "b", "r": "d", "s": "l", "t": "'", "u": "a"}
+_LAT_P_RAND_TABLE = str.maketrans(LAT_P_RAND_MAP)
+
+
+def pron_to_lat_p_rand(pron: Pron) -> str:
+    return pron_to_lat_p(pron).translate(_LAT_P_RAND_TABLE)
+
+
 LEXICAL_CONVERTERS = {
+    "LAT-P-rand": _make_lexical(pron_to_lat_p_rand),
     "LAT-P": _make_lexical(pron_to_lat_p),
     "LAT-P-dots": _make_lexical(lambda p: pron_to_lat_p(p, dots=True)),
     "IPA-P": _make_lexical(pron_to_ipa),

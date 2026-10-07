@@ -72,23 +72,45 @@ def build_dataset(rep: str, subset: str, vocab_map: dict[str, int]):
     return HFDataset.from_list(rows), [r["duration"] for r in rows]
 
 
-def expanded_checkpoint(vocab_size: int, run: Path) -> Path:
+def expanded_checkpoint(vocab_size: int, run: Path, init: str = "official",
+                        reinit_rows: list[int] | None = None) -> Path:
+    """Base checkpoint with the text embedding resized to `vocab_size` (+1 filler row).
+
+    init="official": new rows ~ N(0, 1) (as f5 expand_model_embeddings; trained rows have std ~0.62).
+    init="matched":  new rows (and `reinit_rows`) ~ N(mu_d, sd_d), the per-dimension mean/std of the trained
+                     rows 1..2545 (row 0 = filler excluded) (D-028).
+    reinit_rows: embedding ROW indices (= vocab index + 1) to re-initialize (LAT-P-reinit control).
+    """
     from cached_path import cached_path
     from safetensors.torch import load_file, save_file
     src = str(cached_path(BASE_CKPT))
-    dst = run / f"pretrained_model_1250000_vocab{vocab_size}.safetensors"
+    tag = "" if init == "official" and not reinit_rows else (
+        f"_{init}" + (f"_reinit{len(reinit_rows)}" if reinit_rows else ""))
+    dst = run / f"pretrained_model_1250000_vocab{vocab_size}{tag}.safetensors"
     if dst.exists():
         return dst
     sd = load_file(src, device="cpu")
     old = sd[EMBED_KEY]
     n_new = vocab_size + 1 - old.size(0)
     assert n_new >= 0, (vocab_size, old.shape)
-    if n_new:
-        g = torch.Generator().manual_seed(EXPAND_SEED)
-        sd[EMBED_KEY] = torch.cat([old, torch.randn((n_new, old.size(1)), generator=g, dtype=old.dtype)])
-        save_file(sd, str(dst))
-    else:
+    if n_new == 0 and not reinit_rows:
         shutil.copy2(src, dst)
+        return dst
+    g = torch.Generator().manual_seed(EXPAND_SEED)
+    mu, sdv = old[1:].mean(dim=0), old[1:].std(dim=0)
+    if init == "official":
+        new = torch.randn((n_new, old.size(1)), generator=g, dtype=old.dtype)
+    elif init == "matched":
+        new = mu + sdv * torch.randn((n_new, old.size(1)), generator=g, dtype=old.dtype)
+    else:
+        raise ValueError(init)
+    emb = torch.cat([old, new])
+    if reinit_rows:
+        assert init == "matched", "re-initialization is defined with matched statistics"
+        assert all(1 <= r < old.size(0) for r in reinit_rows), "only pretrained rows (not the filler) can be re-initialized"
+        emb[reinit_rows] = mu + sdv * torch.randn((len(reinit_rows), old.size(1)), generator=g, dtype=old.dtype)
+    sd[EMBED_KEY] = emb.contiguous()
+    save_file(sd, str(dst))
     return dst
 
 
