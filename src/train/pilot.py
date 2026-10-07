@@ -53,8 +53,13 @@ def _disable_power_throttling() -> None:
         _fields_ = [("Version", wt.ULONG), ("ControlMask", wt.ULONG), ("StateMask", wt.ULONG)]
 
     st = _State(1, 0x1, 0)  # PROCESS_POWER_THROTTLING_EXECUTION_SPEED off
-    k32 = ctypes.WinDLL("kernel32")
-    k32.SetProcessInformation(k32.GetCurrentProcess(), 4, ctypes.byref(st), ctypes.sizeof(st))
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    # explicit types: without them the pseudo-handle (-1) is passed as a 32-bit int and the call silently fails
+    k32.GetCurrentProcess.restype = wt.HANDLE
+    k32.SetProcessInformation.argtypes = [wt.HANDLE, ctypes.c_int, ctypes.c_void_p, wt.DWORD]
+    k32.SetProcessInformation.restype = wt.BOOL
+    if not k32.SetProcessInformation(k32.GetCurrentProcess(), 4, ctypes.byref(st), ctypes.sizeof(st)):
+        print(f"warning: power-throttling opt-out failed (winerror {ctypes.get_last_error()})")
 
 
 _disable_power_throttling()
