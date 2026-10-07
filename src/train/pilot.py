@@ -40,6 +40,26 @@ SPLITS = ROOT / "data/derived/splits/v1"
 FRAMES_PER_S = 24000 / 256
 
 
+def _disable_power_throttling() -> None:
+    """Opt this process out of Windows 11 EcoQoS (D-026). Background/scheduled-task processes otherwise run on
+    efficiency cores at low clocks, halving F5 throughput. Wall-clock only; no effect on computation.
+    Runs at import, so spawned DataLoader workers (which re-import the main module) opt out as well."""
+    if os.name != "nt":
+        return
+    import ctypes
+    import ctypes.wintypes as wt
+
+    class _State(ctypes.Structure):
+        _fields_ = [("Version", wt.ULONG), ("ControlMask", wt.ULONG), ("StateMask", wt.ULONG)]
+
+    st = _State(1, 0x1, 0)  # PROCESS_POWER_THROTTLING_EXECUTION_SPEED off
+    k32 = ctypes.WinDLL("kernel32")
+    k32.SetProcessInformation(k32.GetCurrentProcess(), 4, ctypes.byref(st), ctypes.sizeof(st))
+
+
+_disable_power_throttling()
+
+
 class StopTraining(Exception):
     pass
 
