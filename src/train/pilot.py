@@ -209,6 +209,10 @@ def evaluate(arm: str, seed: int, subset: str) -> None:
     from src.eval.asr import ASR, bootstrap, corpus, load_audio_16k, utt_scores
     from src.infer.f5_infer import F5Synth, load_eval, synthesize_set
     out = run_dir(arm, seed, subset)
+    prune = CONFIG.get("prune_after_eval", False)
+    if prune and (out / "eval_summary.json").exists():
+        print(f"{out.name}: already evaluated and pruned; skipping")
+        return
     done = json.loads((out / "train_done.json").read_text(encoding="utf-8"))
     ev = CONFIG["eval"]
     fixed, refs = load_eval("fixed_v1")
@@ -250,6 +254,9 @@ def evaluate(arm: str, seed: int, subset: str) -> None:
         torch.cuda.empty_cache()
     summary = {"arm": arm, "rep": rep, "seed": seed, "subset": subset, "train": done, "results": results}
     (out / "eval_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    if prune:  # D-039: keep final weights only; the expanded checkpoint is reproducible (fixed EXPAND_SEED)
+        for f in [pretrained, *(out / f"online_u{u}.safetensors" for u in ev["eval_updates"] if 0 < u < final_u)]:
+            f.unlink(missing_ok=True)
     for k, v in results.items():
         print(f"{k:62s} CER {v['CER']:6.2f} [{v['CER_ci95'][0]:.2f},{v['CER_ci95'][1]:.2f}]  "
               f"CERns {v['CER_nospace']:6.2f}  WER {v['WER']:6.2f}  n={v['n']}")
@@ -264,6 +271,7 @@ def main() -> int:
     a = ap.parse_args()
     arm_spec(a.arm)  # asserts the arm is in the frozen config
     assert a.seed in CONFIG["train"]["seeds"], "seed not in frozen config"
+    assert a.subset in CONFIG.get("subsets", [CONFIG["train_subset_pilot"]]), "subset not in frozen config"
     (train if a.cmd == "train" else evaluate)(a.arm, a.seed, a.subset)
     return 0
 
