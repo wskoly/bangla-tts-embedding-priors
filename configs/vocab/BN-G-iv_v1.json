@@ -1,0 +1,327 @@
+{
+  "rep": "BN-G-iv",
+  "version": "v1",
+  "file": "configs/vocab/BN-G-iv_v1.txt",
+  "sha256": "f555d44fed7a60659b2915763751eaa906466d603356c1eec040cbbb7c00ecb7",
+  "original_vocab_size": 2545,
+  "final_vocab_size": 2603,
+  "added_symbols": [
+    {
+      "symbol": "ঁ",
+      "codepoint": "U+0981",
+      "name": "BENGALI SIGN CANDRABINDU"
+    },
+    {
+      "symbol": "ং",
+      "codepoint": "U+0982",
+      "name": "BENGALI SIGN ANUSVARA"
+    },
+    {
+      "symbol": "ঃ",
+      "codepoint": "U+0983",
+      "name": "BENGALI SIGN VISARGA"
+    },
+    {
+      "symbol": "অ",
+      "codepoint": "U+0985",
+      "name": "BENGALI LETTER A"
+    },
+    {
+      "symbol": "আ",
+      "codepoint": "U+0986",
+      "name": "BENGALI LETTER AA"
+    },
+    {
+      "symbol": "ই",
+      "codepoint": "U+0987",
+      "name": "BENGALI LETTER I"
+    },
+    {
+      "symbol": "ঈ",
+      "codepoint": "U+0988",
+      "name": "BENGALI LETTER II"
+    },
+    {
+      "symbol": "উ",
+      "codepoint": "U+0989",
+      "name": "BENGALI LETTER U"
+    },
+    {
+      "symbol": "ঊ",
+      "codepoint": "U+098A",
+      "name": "BENGALI LETTER UU"
+    },
+    {
+      "symbol": "ঋ",
+      "codepoint": "U+098B",
+      "name": "BENGALI LETTER VOCALIC R"
+    },
+    {
+      "symbol": "এ",
+      "codepoint": "U+098F",
+      "name": "BENGALI LETTER E"
+    },
+    {
+      "symbol": "ঐ",
+      "codepoint": "U+0990",
+      "name": "BENGALI LETTER AI"
+    },
+    {
+      "symbol": "ও",
+      "codepoint": "U+0993",
+      "name": "BENGALI LETTER O"
+    },
+    {
+      "symbol": "ঔ",
+      "codepoint": "U+0994",
+      "name": "BENGALI LETTER AU"
+    },
+    {
+      "symbol": "ক",
+      "codepoint": "U+0995",
+      "name": "BENGALI LETTER KA"
+    },
+    {
+      "symbol": "খ",
+      "codepoint": "U+0996",
+      "name": "BENGALI LETTER KHA"
+    },
+    {
+      "symbol": "গ",
+      "codepoint": "U+0997",
+      "name": "BENGALI LETTER GA"
+    },
+    {
+      "symbol": "ঘ",
+      "codepoint": "U+0998",
+      "name": "BENGALI LETTER GHA"
+    },
+    {
+      "symbol": "ঙ",
+      "codepoint": "U+0999",
+      "name": "BENGALI LETTER NGA"
+    },
+    {
+      "symbol": "চ",
+      "codepoint": "U+099A",
+      "name": "BENGALI LETTER CA"
+    },
+    {
+      "symbol": "ছ",
+      "codepoint": "U+099B",
+      "name": "BENGALI LETTER CHA"
+    },
+    {
+      "symbol": "জ",
+      "codepoint": "U+099C",
+      "name": "BENGALI LETTER JA"
+    },
+    {
+      "symbol": "ঝ",
+      "codepoint": "U+099D",
+      "name": "BENGALI LETTER JHA"
+    },
+    {
+      "symbol": "ঞ",
+      "codepoint": "U+099E",
+      "name": "BENGALI LETTER NYA"
+    },
+    {
+      "symbol": "ট",
+      "codepoint": "U+099F",
+      "name": "BENGALI LETTER TTA"
+    },
+    {
+      "symbol": "ঠ",
+      "codepoint": "U+09A0",
+      "name": "BENGALI LETTER TTHA"
+    },
+    {
+      "symbol": "ড",
+      "codepoint": "U+09A1",
+      "name": "BENGALI LETTER DDA"
+    },
+    {
+      "symbol": "ঢ",
+      "codepoint": "U+09A2",
+      "name": "BENGALI LETTER DDHA"
+    },
+    {
+      "symbol": "ণ",
+      "codepoint": "U+09A3",
+      "name": "BENGALI LETTER NNA"
+    },
+    {
+      "symbol": "ত",
+      "codepoint": "U+09A4",
+      "name": "BENGALI LETTER TA"
+    },
+    {
+      "symbol": "থ",
+      "codepoint": "U+09A5",
+      "name": "BENGALI LETTER THA"
+    },
+    {
+      "symbol": "দ",
+      "codepoint": "U+09A6",
+      "name": "BENGALI LETTER DA"
+    },
+    {
+      "symbol": "ধ",
+      "codepoint": "U+09A7",
+      "name": "BENGALI LETTER DHA"
+    },
+    {
+      "symbol": "ন",
+      "codepoint": "U+09A8",
+      "name": "BENGALI LETTER NA"
+    },
+    {
+      "symbol": "প",
+      "codepoint": "U+09AA",
+      "name": "BENGALI LETTER PA"
+    },
+    {
+      "symbol": "ফ",
+      "codepoint": "U+09AB",
+      "name": "BENGALI LETTER PHA"
+    },
+    {
+      "symbol": "ব",
+      "codepoint": "U+09AC",
+      "name": "BENGALI LETTER BA"
+    },
+    {
+      "symbol": "ভ",
+      "codepoint": "U+09AD",
+      "name": "BENGALI LETTER BHA"
+    },
+    {
+      "symbol": "ম",
+      "codepoint": "U+09AE",
+      "name": "BENGALI LETTER MA"
+    },
+    {
+      "symbol": "য",
+      "codepoint": "U+09AF",
+      "name": "BENGALI LETTER YA"
+    },
+    {
+      "symbol": "র",
+      "codepoint": "U+09B0",
+      "name": "BENGALI LETTER RA"
+    },
+    {
+      "symbol": "ল",
+      "codepoint": "U+09B2",
+      "name": "BENGALI LETTER LA"
+    },
+    {
+      "symbol": "শ",
+      "codepoint": "U+09B6",
+      "name": "BENGALI LETTER SHA"
+    },
+    {
+      "symbol": "ষ",
+      "codepoint": "U+09B7",
+      "name": "BENGALI LETTER SSA"
+    },
+    {
+      "symbol": "স",
+      "codepoint": "U+09B8",
+      "name": "BENGALI LETTER SA"
+    },
+    {
+      "symbol": "হ",
+      "codepoint": "U+09B9",
+      "name": "BENGALI LETTER HA"
+    },
+    {
+      "symbol": "়",
+      "codepoint": "U+09BC",
+      "name": "BENGALI SIGN NUKTA"
+    },
+    {
+      "symbol": "া",
+      "codepoint": "U+09BE",
+      "name": "BENGALI VOWEL SIGN AA"
+    },
+    {
+      "symbol": "ি",
+      "codepoint": "U+09BF",
+      "name": "BENGALI VOWEL SIGN I"
+    },
+    {
+      "symbol": "ী",
+      "codepoint": "U+09C0",
+      "name": "BENGALI VOWEL SIGN II"
+    },
+    {
+      "symbol": "ু",
+      "codepoint": "U+09C1",
+      "name": "BENGALI VOWEL SIGN U"
+    },
+    {
+      "symbol": "ূ",
+      "codepoint": "U+09C2",
+      "name": "BENGALI VOWEL SIGN UU"
+    },
+    {
+      "symbol": "ৃ",
+      "codepoint": "U+09C3",
+      "name": "BENGALI VOWEL SIGN VOCALIC R"
+    },
+    {
+      "symbol": "ে",
+      "codepoint": "U+09C7",
+      "name": "BENGALI VOWEL SIGN E"
+    },
+    {
+      "symbol": "ৈ",
+      "codepoint": "U+09C8",
+      "name": "BENGALI VOWEL SIGN AI"
+    },
+    {
+      "symbol": "ো",
+      "codepoint": "U+09CB",
+      "name": "BENGALI VOWEL SIGN O"
+    },
+    {
+      "symbol": "ৌ",
+      "codepoint": "U+09CC",
+      "name": "BENGALI VOWEL SIGN AU"
+    },
+    {
+      "symbol": "ৎ",
+      "codepoint": "U+09CE",
+      "name": "BENGALI LETTER KHANDA TA"
+    }
+  ],
+  "n_new_embeddings": 58,
+  "embedding_dim": 512,
+  "embedding_rows": 2604,
+  "symbols_used": 62,
+  "symbols_used_from_base": 4,
+  "splits": {
+    "train_full": {
+      "utterances": 1568,
+      "tokens": 91917,
+      "unknown_symbols": 0
+    },
+    "val": {
+      "utterances": 50,
+      "tokens": 2718,
+      "unknown_symbols": 0
+    },
+    "test_seen": {
+      "utterances": 163,
+      "tokens": 8936,
+      "unknown_symbols": 0
+    },
+    "test_unseen": {
+      "utterances": 110,
+      "tokens": 6300,
+      "unknown_symbols": 0
+    }
+  }
+}

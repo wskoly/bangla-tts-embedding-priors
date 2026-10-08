@@ -109,3 +109,23 @@ def test_ascii_reps_fit_f5_base_vocab(rep):
         res = convert(rep, t)
         missing |= {c for c in res.text if c not in vocab and c != OOV_MARK}
     assert not missing, f"{rep}: symbols absent from F5 base vocab: {sorted(missing)}"
+
+
+@pytest.mark.parametrize("word, iv, iv_vm, iv_vm_asp", [
+    ("কথা", "কঅথা", "কঅথআ", "কঅতহআ"),
+    ("শক্তি", "শঅকতি", "শঅকতই", "শঅকতই"),
+    ("বই", "বঅই", "বঅই", "বঅই"),
+    ("বি", "বি", "বই", "বই"),
+    ("খে", "খে", "খএ", "কহএ"),
+    ("সৎ", "সঅৎ", "সঅৎ", "সঅৎ"),
+    ("গাঢ়", "গাঢ়অ", "গআঢ়অ", "গআড়হঅ"),
+])
+def test_bn_g_encoding_path(word, iv, iv_vm, iv_vm_asp):
+    assert [convert(r, word).text for r in ("BN-G-iv", "BN-G-iv-vm", "BN-G-iv-vm-asp")] == [iv, iv_vm, iv_vm_asp]
+
+
+@pytest.mark.parametrize("rep", ["BN-G-iv", "BN-G-iv-vm", "BN-G-iv-vm-asp"])
+def test_bn_g_encoding_path_is_lossless(rep):
+    words = {w for t in slr37_texts() for w in normalize(t).split()}
+    outs = {convert(rep, w, already_normalized=True).text for w in words}
+    assert len(outs) == len(words)

@@ -47,6 +47,45 @@ def _bn_g(word: str) -> str:
     return word
 
 
+# Encoding-path arms (D-034): Bengali codepoints moved step by step toward ITRANS structure.
+# Canonical (NFC) text keeps য়/ড়/ঢ় decomposed as base + nukta, as BN-G does; these arms keep that encoding.
+_CONSONANTS = {chr(c) for c in range(0x0995, 0x09BA)}  # ৎ excluded: no inherent vowel
+_NUKTA = "়"
+_VOWEL_SIGNS = {"া": "আ", "ি": "ই", "ী": "ঈ", "ু": "উ", "ূ": "ঊ", "ৃ": "ঋ", "ৄ": "ৠ", "ে": "এ", "ৈ": "ঐ",
+                "ো": "ও", "ৌ": "ঔ", "ৗ": "ঔ", "ৢ": "ঌ", "ৣ": "ৡ"}
+_HASANTA = "্"
+_ASPIRATES = {"খ": "কহ", "ঘ": "গহ", "ছ": "চহ", "ঝ": "জহ", "ঠ": "টহ", "ঢ": "ডহ", "থ": "তহ", "ধ": "দহ",
+              "ফ": "পহ", "ভ": "বহ"}
+
+
+def _bn_g_iv(word: str) -> str:
+    """Explicit inherent vowel অ after every consonant (+ nukta) not followed by a vowel sign or hasanta;
+    hasanta dropped."""
+    out = []
+    for i, ch in enumerate(word):
+        if ch == _HASANTA:
+            continue
+        out.append(ch)
+        j = i + 1
+        if ch in _CONSONANTS and j < len(word) and word[j] == _NUKTA:
+            continue  # decide after the nukta
+        base = ch == _NUKTA and i > 0 and word[i - 1] in _CONSONANTS
+        nxt = word[j] if j < len(word) else ""
+        if (ch in _CONSONANTS or base) and nxt not in _VOWEL_SIGNS and nxt != _HASANTA:
+            out.append("অ")
+    return "".join(out)
+
+
+def _bn_g_iv_vm(word: str) -> str:
+    return "".join(_VOWEL_SIGNS.get(ch, ch) for ch in _bn_g_iv(word))
+
+
+def _bn_g_iv_vm_asp(word: str) -> str:
+    """Aspirates split into unaspirated + হ; the nukta stays on its base letter (ঢ় -> ড় + হ)."""
+    s = _bn_g_iv_vm(word).replace("ঢ" + _NUKTA, "ড" + _NUKTA + "হ")
+    return "".join(_ASPIRATES.get(ch, ch) for ch in s)
+
+
 def _lat_g_itrans(word: str) -> str:
     from indic_transliteration import sanscript
     return sanscript.transliterate(_precompose(word), sanscript.BENGALI, sanscript.ITRANS)
@@ -123,6 +162,9 @@ def _make_lexical(render: Callable[[Pron], str]) -> Callable[[str, G2P | None], 
 
 WORD_CONVERTERS: dict[str, Callable[[str], str]] = {
     "BN-G": _bn_g,
+    "BN-G-iv": _bn_g_iv,
+    "BN-G-iv-vm": _bn_g_iv_vm,
+    "BN-G-iv-vm-asp": _bn_g_iv_vm_asp,
     "LAT-G-det": _lat_g_itrans,
     "LAT-G-iso": _lat_g_iso,
     "LAT-G-colloq": _lat_g_colloq,
