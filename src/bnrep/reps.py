@@ -86,6 +86,27 @@ def _bn_g_iv_vm_asp(word: str) -> str:
     return "".join(_ASPIRATES.get(ch, ch) for ch in s)
 
 
+# LAT-G-asp (D-036): one-to-one relabeling of BN-G-iv-vm-asp onto single lowercase characters that already
+# have pretrained F5 rows. Frequent symbols get plain ASCII with plausible English/pinyin priors; rare symbols
+# and retroflexes get diacritic letters. No case pairs; the only digraphs are aspirates (C + h), as in the source.
+_LAT_G_ASP_PAIRS = {"ড" + _NUKTA: "ṛ", "য" + _NUKTA: "ý"}
+_LAT_G_ASP_MAP = {
+    "অ": "o", "আ": "a", "ই": "i", "ঈ": "ī", "উ": "u", "ঊ": "ū", "ঋ": "ř", "এ": "e", "ঐ": "ê", "ও": "ō", "ঔ": "ô",
+    "ক": "k", "গ": "g", "ঙ": "ṅ", "চ": "c", "জ": "j", "ঞ": "ñ", "ট": "ṭ", "ড": "ḍ", "ণ": "ṇ", "ত": "t", "দ": "d",
+    "ন": "n", "প": "p", "ব": "b", "ম": "m", "য": "y", "র": "r", "ল": "l", "শ": "x", "ষ": "ṣ", "স": "s", "হ": "h",
+    "ৎ": "ť", "ং": "ṁ", "ঃ": "ḥ", "ঁ": "ṃ",
+}
+
+
+def _lat_g_asp(word: str) -> str:
+    s = _bn_g_iv_vm_asp(word)
+    for k, v in _LAT_G_ASP_PAIRS.items():
+        s = s.replace(k, v)
+    out = "".join(_LAT_G_ASP_MAP.get(ch, ch) for ch in s)
+    assert not any("ঀ" <= ch <= "৿" for ch in out), (word, out)
+    return out
+
+
 def _lat_g_itrans(word: str) -> str:
     from indic_transliteration import sanscript
     return sanscript.transliterate(_precompose(word), sanscript.BENGALI, sanscript.ITRANS)
@@ -165,6 +186,7 @@ WORD_CONVERTERS: dict[str, Callable[[str], str]] = {
     "BN-G-iv": _bn_g_iv,
     "BN-G-iv-vm": _bn_g_iv_vm,
     "BN-G-iv-vm-asp": _bn_g_iv_vm_asp,
+    "LAT-G-asp": _lat_g_asp,
     "LAT-G-det": _lat_g_itrans,
     "LAT-G-iso": _lat_g_iso,
     "LAT-G-colloq": _lat_g_colloq,

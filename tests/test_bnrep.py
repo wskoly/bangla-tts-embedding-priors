@@ -129,3 +129,17 @@ def test_bn_g_encoding_path_is_lossless(rep):
     words = {w for t in slr37_texts() for w in normalize(t).split()}
     outs = {convert(rep, w, already_normalized=True).text for w in words}
     assert len(outs) == len(words)
+
+
+@pytest.mark.parametrize("word, expected", [("আমি", "ami"), ("কথা", "kotha"), ("খাবার", "khabaro"),
+                                            ("বই", "boi"), ("বৈ", "bê"), ("বড়", "boṛo"), ("গাঢ়", "gaṛho")])
+def test_lat_g_asp(word, expected):
+    assert convert("LAT-G-asp", word).text == expected
+
+
+def test_lat_g_asp_fits_f5_base_vocab_and_is_lossless():
+    vocab = f5_vocab()
+    words = {w for t in slr37_texts() for w in normalize(t).split()}
+    outs = {convert("LAT-G-asp", w, already_normalized=True).text for w in words}
+    assert len(outs) == len(words)
+    assert not {c for o in outs for c in o if c not in vocab}
