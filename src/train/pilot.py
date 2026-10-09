@@ -77,7 +77,21 @@ def arm_spec(arm: str) -> dict:
         assert arm in arms, f"arm {arm!r} not in frozen config"
         return {"rep": arm, "init": "official", "reinit": None}
     assert arm in arms, f"arm {arm!r} not in frozen config"
-    return {"init": "official", "reinit": None, **arms[arm]}
+    return {"init": "official", "reinit": None, "embed_lr_mult": 1, **arms[arm]}
+
+
+def set_embed_lr(trainer, lr: float) -> float:
+    """D-043: give the text-embedding table its own AdamW param group at `lr` (no-op when equal to the base LR).
+    Called before trainer.train(), which builds the warmup/decay scheduler and so scales each group from its own lr."""
+    opt = trainer.optimizer.optimizer  # unwrap accelerate's AcceleratedOptimizer
+    base = opt.param_groups[0]["lr"]
+    if lr == base:
+        return lr
+    emb = [p for n, p in trainer.model.named_parameters() if n.endswith("text_embed.text_embed.weight")]
+    assert len(emb) == 1 and len(opt.param_groups) == 1, "unexpected model/optimizer layout"
+    opt.param_groups[0]["params"] = [p for p in opt.param_groups[0]["params"] if p is not emb[0]]
+    opt.add_param_group({"params": emb, "lr": lr})
+    return lr
 
 
 def reinit_rows_for(rep: str, vocab_map: dict[str, int], rule: str | None) -> list[int] | None:
@@ -150,6 +164,7 @@ def train(arm: str, seed: int, subset: str) -> None:
                       grad_accumulation_steps=tc["grad_accum"], max_grad_norm=tc["max_grad_norm"], logger=None,
                       log_samples=False, last_per_updates=10**9, bnb_optimizer=False,
                       accelerate_kwargs={"mixed_precision": tc["mixed_precision"]})
+    embed_lr = set_embed_lr(trainer, tc["learning_rate"] * spec["embed_lr_mult"])
     dataset = CustomDataset(train_hf, durations=durations, preprocessed_mel=False, **MEL)
 
     eval_updates = {u for u in CONFIG["eval"]["eval_updates"] if u > 0}
@@ -173,7 +188,7 @@ def train(arm: str, seed: int, subset: str) -> None:
     trainer.accelerator.backward = backward
     trainer.ema_model.update = ema_update
     config = {"arm": arm, "rep": rep, "init": spec["init"], "reinit_rule": spec["reinit"],
-              "n_reinit_rows": len(reinit_rows or []), "seed": seed, "subset": subset, "pilot_config": CONFIG["version"],
+              "n_reinit_rows": len(reinit_rows or []), "embed_lr": embed_lr, "seed": seed, "subset": subset, "pilot_config": CONFIG["version"],
               "vocab_file": str(vocab_path), "vocab_size": len(vocab_map), "pretrained": str(ckpt),
               "micro_batches_per_epoch": micro, "updates_per_epoch": upe, "epochs": epochs,
               "schedule_total_updates": epochs * upe, "n_utts": len(durations),
