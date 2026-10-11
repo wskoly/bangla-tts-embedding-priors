@@ -33,7 +33,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = json.loads((ROOT / "configs/pilot_v1_1.json").read_text(encoding="utf-8"))
-from src.corpus.profile import AUDIO_INDEX, EVAL_DIR  # noqa: E402  (D-057 data profile)
+from src.corpus.profile import ALLOW_G2P, AUDIO_INDEX, EVAL_DIR  # noqa: E402  (D-057 data profile)
 SR, HOP, TARGET_RMS = 24000, 256, 0.1
 
 
@@ -98,7 +98,7 @@ def synthesize_set(synth: F5Synth, items: list[dict], refs: dict[str, dict], out
     for it in items:
         ref = refs[it["speaker"]]
         ref_res, gen_res = convert(synth.rep, ref["text"]), convert(synth.rep, it["text"])
-        assert not ref_res.oov and not gen_res.oov, (it["utt_id"], ref_res.oov, gen_res.oov)
+        assert ALLOW_G2P or (not ref_res.oov and not gen_res.oov), (it["utt_id"], ref_res.oov, gen_res.oov)  # D-057
         gen_s = float(audio[it["utt_id"]]["duration_s"])
         torch.cuda.synchronize()
         t0 = time.time()

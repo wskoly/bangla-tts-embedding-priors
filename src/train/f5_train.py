@@ -29,7 +29,7 @@ from pathlib import Path
 import torch
 
 ROOT = Path(__file__).resolve().parents[2]
-from src.corpus.profile import AUDIO_INDEX, MANIFEST, SPLITS  # noqa: E402  (D-057 data profile)
+from src.corpus.profile import ALLOW_G2P, AUDIO_INDEX, MANIFEST, SPLITS  # noqa: E402  (D-057 data profile)
 BASE_CKPT = "hf://SWivid/F5-TTS/F5TTS_v1_Base/model_1250000.safetensors"
 EMBED_KEY = "ema_model.transformer.text_embed.text_embed.weight"
 ARCH = dict(dim=1024, depth=22, heads=16, ff_mult=2, text_dim=512, text_mask_padding=True, qk_norm=None,
@@ -63,7 +63,7 @@ def build_dataset(rep: str, subset: str, vocab_map: dict[str, int]):
     rows = []
     for u in ids:
         res = convert(rep, raw[u])
-        assert not res.oov, (u, res.oov)
+        assert ALLOW_G2P or not res.oov, (u, res.oov)  # C1 profile: out-of-lexicon words are G2P-filled (D-057)
         encode(res.text, vocab_map)  # raises on any unknown symbol
         rows.append({"audio_path": str(ROOT / audio[u]["path"]), "text": res.text,
                      "duration": float(audio[u]["duration_s"])})
