@@ -25,8 +25,7 @@ from importlib.resources import files
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SPLITS = ROOT / "data/derived/splits/v1"
-MANIFEST = ROOT / "data/derived/slr37_bn_bd/manifest.tsv"
+from src.corpus.profile import ALLOW_G2P, MANIFEST, SPLITS  # noqa: E402  (D-057 data profile)
 SPLIT_NAMES = ["train_full", "val", "test_seen", "test_unseen"]  # train subsets are nested in train_full
 TEXT_DIM = 512  # F5TTS_v1_Base text_dim; embedding rows = vocab_size + 1 (row 0 = filler)
 VERSION = "v1"
@@ -69,7 +68,7 @@ def split_texts(rep: str) -> dict[str, dict[str, str]]:
             ids = [r["utt_id"] for r in csv.DictReader(f, delimiter="\t")]
         res = {u: convert(rep, raw[u]) for u in ids}
         bad = {u: r.oov for u, r in res.items() if r.oov}
-        if bad:
+        if bad and not ALLOW_G2P:  # C1 profile allows G2P for out-of-lexicon words (LAT-P only; reported separately)
             raise RuntimeError(f"{rep}/{name}: words needing G2P (SLR37 must be G2P-free): {list(bad.items())[:3]}")
         out[name] = {u: r.text for u, r in res.items()}
     return out

@@ -36,8 +36,7 @@ if SMOKE:
               "train": {**CONFIG["train"], "updates": 20, "warmup_updates": 2},
               "eval": {**CONFIG["eval"], "eval_updates": [0, 10, 20]}}
 SMOKE_MAX_ITEMS = 5
-MANIFEST = ROOT / "data/derived/slr37_bn_bd/manifest.tsv"
-SPLITS = ROOT / "data/derived/splits/v1"
+from src.corpus.profile import MANIFEST, SPLITS  # noqa: E402  (D-057 data profile)
 FRAMES_PER_S = 24000 / 256
 
 

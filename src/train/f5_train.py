@@ -29,9 +29,7 @@ from pathlib import Path
 import torch
 
 ROOT = Path(__file__).resolve().parents[2]
-AUDIO_INDEX = ROOT / "data/derived/audio24k_v1/index.tsv"
-MANIFEST = ROOT / "data/derived/slr37_bn_bd/manifest.tsv"
-SPLITS = ROOT / "data/derived/splits/v1"
+from src.corpus.profile import AUDIO_INDEX, MANIFEST, SPLITS  # noqa: E402  (D-057 data profile)
 BASE_CKPT = "hf://SWivid/F5-TTS/F5TTS_v1_Base/model_1250000.safetensors"
 EMBED_KEY = "ema_model.transformer.text_embed.text_embed.weight"
 ARCH = dict(dim=1024, depth=22, heads=16, ff_mult=2, text_dim=512, text_mask_padding=True, qk_norm=None,

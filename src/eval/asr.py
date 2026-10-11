@@ -32,7 +32,7 @@ import torchaudio.functional as AF
 from src.bnrep.normalize import normalize
 
 ROOT = Path(__file__).resolve().parents[2]
-MANIFEST = ROOT / "data/derived/slr37_bn_bd/manifest.tsv"
+from src.corpus.profile import MANIFEST  # noqa: E402  (D-057 data profile)
 SEED = 20261006
 
 

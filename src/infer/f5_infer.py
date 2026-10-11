@@ -33,8 +33,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = json.loads((ROOT / "configs/pilot_v1_1.json").read_text(encoding="utf-8"))
-AUDIO_INDEX = ROOT / "data/derived/audio24k_v1/index.tsv"
-EVAL_DIR = ROOT / "data/derived/eval"
+from src.corpus.profile import AUDIO_INDEX, EVAL_DIR  # noqa: E402  (D-057 data profile)
 SR, HOP, TARGET_RMS = 24000, 256, 0.1
 
 

@@ -214,9 +214,27 @@ LEXICAL_CONVERTERS = {
 REP_IDS = list(WORD_CONVERTERS) + list(LEXICAL_CONVERTERS)
 
 
+_PROFILE_G2P: list = []
+
+
+def _profile_g2p() -> G2P | None:
+    """C1 (D-057): when the data profile allows G2P, lexical arms fill out-of-lexicon words with G2P v1
+    (CPU, greedy, so identical in training, inference and vocab checks). SLR37 profile: None (unchanged)."""
+    if not _PROFILE_G2P:
+        from src.corpus.profile import ALLOW_G2P, ROOT
+        g = None
+        if ALLOW_G2P:
+            from .g2p.model import G2P as G2PModel
+            g = G2PModel(ROOT / "runs/g2p/v1", device="cpu")
+        _PROFILE_G2P.append(g)
+    return _PROFILE_G2P[0]
+
+
 def convert(rep_id: str, text: str, g2p: G2P | None = None, already_normalized: bool = False) -> Result:
     if rep_id not in WORD_CONVERTERS and rep_id not in LEXICAL_CONVERTERS:
         raise KeyError(f"unknown representation {rep_id!r}; known: {REP_IDS}")
+    if g2p is None and rep_id in LEXICAL_CONVERTERS:
+        g2p = _profile_g2p()
     canon = text if already_normalized else normalize(text)
     out, oov = [], []
     for tok in tokens(canon):
