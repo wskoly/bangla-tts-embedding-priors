@@ -119,8 +119,10 @@ def main() -> int:
     shard_genders = collections.defaultdict(set)
     for m in meta:
         shard_genders[m["shard"]].add(m["gender"])
+    female_train = sorted(s for s, g in shard_genders.items() if s.startswith("train-") and g == {SEEN})
+    scope = {SEEN_TEST_SHARD, UNSEEN_TEST_SHARD, *female_train[:4]}  # filters (incl. CPU G2P) only where rows can be drawn
     excl, cand = collections.Counter(), []
-    for r in meta:
+    for r in (m for m in meta if m["shard"] in scope):
         if r["style"] not in NEUTRAL:
             excl["emotion style"] += 1
             continue
@@ -140,11 +142,10 @@ def main() -> int:
     test_seen = by(lambda c: c["shard"] == SEEN_TEST_SHARD and c["gender"] == SEEN)[:N_SEEN]
     test_unseen = by(lambda c: c["shard"] == UNSEEN_TEST_SHARD and c["gender"] == UNSEEN)[:N_UNSEEN]
     assert len(test_seen) == N_SEEN and len(test_unseen) == N_UNSEEN
-    female_train = sorted(s for s, g in shard_genders.items() if s.startswith("train-") and g == {SEEN})
 
     used_texts = {c["nfc"] for c in test_seen + test_unseen}
     val, train, train_s, shards_used = [], [], 0.0, []
-    for shard in female_train:  # add shards in name order until val + 1 h of trimmed speech
+    for shard in female_train[:4]:  # add shards in name order until val + 1 h of trimmed speech
         if len(val) == N_VAL and train_s >= TRAIN_H * 3600:
             break
         shards_used.append(shard)
@@ -224,7 +225,7 @@ def report(splits: dict, excl: collections.Counter, shards: list[str], n_cand: i
     lines = ["# C1 Rasa Bengali data (rasa_bn_v1, D-057)", "",
              "Built by `tools/c1_rasa_build.py` under `docs/C1_data_rules.md` (rules fixed before download).", "",
              f"- Shards downloaded: {', '.join(shards)}.",
-             f"- Neutral candidates after filters: {n_cand}. Exclusions: {dict(excl)}.", "",
+             f"- Filters applied to the 2 test shards + first 4 Female train shards. Neutral candidates: {n_cand}. Exclusions: {dict(excl)}.", "",
              "| split | speaker | utts | trimmed speech h | raw h |", "|---|---|---|---|---|"]
     for name, rows in splits.items():
         lines.append(f"| {name} | {', '.join(sorted({SPK[c['gender']] for c in rows}))} | {len(rows)} | "
