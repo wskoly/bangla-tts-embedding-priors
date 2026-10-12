@@ -1,0 +1,40 @@
+{
+  "shards": [
+    "train-00028-of-00055.parquet",
+    "train-00029-of-00055.parquet",
+    "train-00030-of-00055.parquet",
+    "test-00004-of-00007.parquet",
+    "test-00000-of-00007.parquet"
+  ],
+  "coverage": {
+    "test_seen": {
+      "token_cov": 84.66386554621849,
+      "type_cov": 78.97990726429676,
+      "fully_covered_utts": 47,
+      "utts": 160
+    },
+    "test_unseen": {
+      "token_cov": 83.89312977099237,
+      "type_cov": 79.46808510638299,
+      "fully_covered_utts": 31,
+      "utts": 110
+    },
+    "val": {
+      "token_cov": 88.05460750853243,
+      "type_cov": 85.27472527472527,
+      "fully_covered_utts": 18,
+      "utts": 50
+    },
+    "train_1h": {
+      "token_cov": 84.5509475418841,
+      "type_cov": 74.37904967602591,
+      "fully_covered_utts": 150,
+      "utts": 624
+    }
+  },
+  "excluded": {
+    "duration outside 1-15 s": 117,
+    "emotion style": 935,
+    "text rule (digits / Latin / out-of-vocab)": 14
+  }
+}
