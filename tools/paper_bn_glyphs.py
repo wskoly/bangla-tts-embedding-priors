@@ -27,7 +27,7 @@ SIZE_PT, HEIGHT, BASELINE = 10.0, 1.55, 0.32  # canvas height in em; baseline as
 
 STRINGS = {"ca": "চ", "ka": "ক", "cha": "ছ", "kha": "খ", "a": "অ", "aa": "আ", "aasign": "া", "hasanta": "্",
            "aricha": "আরিচা", "arika": "আরিকা", "kolom": "কলম", "chobi": "ছবি", "boi": "বই", "bidda": "বিদ্যা",
-           "gyan": "জ্ঞান", "shopno": "স্বপ্ন", "chokh": "চোখ"}
+           "gyan": "জ্ঞান", "shopno": "স্বপ্ন", "chokh": "চোখ", "ga": "গ", "ba": "ব", "ha": "হ"}
 for rep, key in (("BN-G-iv", "chokhiv"), ("BN-G-iv-vm", "chokhvm"), ("BN-G-iv-vm-asp", "chokhasp"),
                  ("BN-G-iv", "kolomiv")):
     STRINGS[key] = convert(rep, "কলম" if key.startswith("kolom") else "চোখ").text
