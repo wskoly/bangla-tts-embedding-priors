@@ -36,6 +36,7 @@ f5-tts==1.1.22
 fastapi==0.142.2
 filelock==3.32.3
 fonttools==4.66.1
+formulaic==1.2.2
 frozendict==2.4.7
 frozenlist==1.8.0
 fsspec==2026.7.0
@@ -59,6 +60,7 @@ hydra-core==1.3.7
 idna==3.20
 indic-transliteration==2.3.82
 iniconfig==2.3.0
+interface-meta==2.0.1
 jaconv==0.5.0
 jinja2==3.1.6
 jiwer==4.0.0
@@ -97,6 +99,7 @@ opentelemetry-semantic-conventions==0.66b0
 orjson==3.12.0
 packaging==26.3
 pandas==3.0.6
+patsy==1.0.3
 pillow==12.3.0
 platformdirs==4.12.3
 pluggy==1.6.0
@@ -139,6 +142,7 @@ six==1.17.0
 soundfile==0.14.0
 soxr==1.1.0
 starlette==1.7.0
+statsmodels==0.15.0
 sympy==1.14.0
 threadpoolctl==3.7.0
 tokenizers==0.23.2
