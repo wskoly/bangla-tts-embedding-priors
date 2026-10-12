@@ -76,7 +76,7 @@ def arm_spec(arm: str) -> dict:
         assert arm in arms, f"arm {arm!r} not in frozen config"
         return {"rep": arm, "init": "official", "reinit": None}
     assert arm in arms, f"arm {arm!r} not in frozen config"
-    return {"init": "official", "reinit": None, "embed_lr_mult": 1, **arms[arm]}
+    return {"init": "official", "reinit": None, "embed_lr_mult": 1, "init_seed": 666, **arms[arm]}
 
 
 def set_embed_lr(trainer, lr: float) -> float:
@@ -149,7 +149,8 @@ def train(arm: str, seed: int, subset: str) -> None:
     vocab_map, vocab_path = load_vocab(rep)
     train_hf, durations = build_dataset(rep, subset, vocab_map)
     reinit_rows = reinit_rows_for(rep, vocab_map, spec["reinit"])
-    ckpt = expanded_checkpoint(len(vocab_map), out, init=spec["init"], reinit_rows=reinit_rows)
+    ckpt = expanded_checkpoint(len(vocab_map), out, init=spec["init"], reinit_rows=reinit_rows,
+                               init_seed=spec["init_seed"])
     micro = micro_batches_per_epoch(durations, tc["batch_frames"], tc["max_samples"], seed)
     upe = math.ceil(micro / tc["grad_accum"])
     epochs = math.ceil(tc["updates"] / upe)
@@ -186,7 +187,7 @@ def train(arm: str, seed: int, subset: str) -> None:
 
     trainer.accelerator.backward = backward
     trainer.ema_model.update = ema_update
-    config = {"arm": arm, "rep": rep, "init": spec["init"], "reinit_rule": spec["reinit"],
+    config = {"arm": arm, "rep": rep, "init": spec["init"], "init_seed": spec["init_seed"], "reinit_rule": spec["reinit"],
               "n_reinit_rows": len(reinit_rows or []), "embed_lr": embed_lr, "seed": seed, "subset": subset, "pilot_config": CONFIG["version"],
               "vocab_file": str(vocab_path), "vocab_size": len(vocab_map), "pretrained": str(ckpt),
               "micro_batches_per_epoch": micro, "updates_per_epoch": upe, "epochs": epochs,

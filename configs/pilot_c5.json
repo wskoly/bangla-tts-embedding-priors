@@ -1,0 +1,113 @@
+{
+  "base_checkpoint": "hf://SWivid/F5-TTS/F5TTS_v1_Base/model_1250000.safetensors",
+  "base_snapshot": "84e5a410d9cead4de2f847e7c9369a6440bdfaca",
+  "f5_tts_version": "1.1.22",
+  "torch": "2.11.0+cu128",
+  "vocab_version": "v1",
+  "train_subset_pilot": "train_1h",
+  "train": {
+    "batch_frames": 2000,
+    "grad_accum": 2,
+    "effective_batch_frames": 4000,
+    "max_samples": 64,
+    "learning_rate": 1e-05,
+    "updates": 3000,
+    "warmup_updates": 300,
+    "max_grad_norm": 1.0,
+    "mixed_precision": "bf16",
+    "optimizer": "AdamW (fused), official F5 Trainer",
+    "checkpoint_activations": false,
+    "new_embedding_init": "N(0,1), seed 666 (official expand_model_embeddings)",
+    "data_order_seed": 666,
+    "seeds": [
+      666,
+      1234
+    ],
+    "num_workers": 4
+  },
+  "eval": {
+    "eval_updates": [
+      0,
+      500,
+      1000,
+      2000,
+      3000
+    ],
+    "eval_set": "data/derived/eval/fixed_v1.tsv",
+    "refs": "data/derived/eval/refs_v1.tsv",
+    "final_eval_sets": [
+      "test_seen",
+      "test_unseen"
+    ],
+    "nfe_step": 32,
+    "cfg_strength": 2.0,
+    "sway_sampling_coef": -1.0,
+    "inference_dtype": "float16",
+    "duration": "ground-truth trimmed duration of the target utterance + reference duration (identical across arms)",
+    "text_join": "ref_text + ' ' + gen_text for every arm",
+    "per_utterance_seed": "int(sha256(utt_id)[:8], 16)",
+    "asr_primary": "bengaliAI/tugstugi_bengaliai-asr_whisper-medium",
+    "asr_secondary": "arijitx/wav2vec2-xls-r-300m-bengali",
+    "metrics": [
+      "CER",
+      "CER_nospace",
+      "WER",
+      "PER (when available)",
+      "SIM (when available)"
+    ],
+    "weights": "online (non-EMA) model weights at each eval update; update 0 = expanded pretrained (EMA) weights",
+    "ema_note": "F5 EMA (ema_pytorch defaults beta=0.9999, update_after_step=100, update_every=10) receives ~290 updates in 3000 steps and stays ~97% at the update-100 weights; not evaluated"
+  },
+  "storage": "online-model fp16 weights saved at each eval update (online_u<N>.safetensors); optimizer checkpoints never written",
+  "prune_after_eval": true,
+  "_comment": "C5 causal controls (D-067), frozen before runs; recipe identical to pilot_v8a. C5a: fresh-row initialization seeds 1001/1002 (original runs used 666) for the three fresh-row arms, training seed 666. C5b: two further fixed derangements of the LAT-P alphabet, seeds 666 and 1234. Plan: docs/C5_analysis_plan.md.",
+  "version": "pilot_c5",
+  "arms": {
+    "BN-G-matched-is1001": {
+      "rep": "BN-G",
+      "init": "matched",
+      "reinit": null,
+      "init_seed": 1001
+    },
+    "LAT-P-reinit-is1001": {
+      "rep": "LAT-P",
+      "init": "matched",
+      "reinit": "used_except_space_punct",
+      "init_seed": 1001
+    },
+    "BN-G-iv-vm-asp-is1001": {
+      "rep": "BN-G-iv-vm-asp",
+      "init": "matched",
+      "reinit": null,
+      "init_seed": 1001
+    },
+    "BN-G-matched-is1002": {
+      "rep": "BN-G",
+      "init": "matched",
+      "reinit": null,
+      "init_seed": 1002
+    },
+    "LAT-P-reinit-is1002": {
+      "rep": "LAT-P",
+      "init": "matched",
+      "reinit": "used_except_space_punct",
+      "init_seed": 1002
+    },
+    "BN-G-iv-vm-asp-is1002": {
+      "rep": "BN-G-iv-vm-asp",
+      "init": "matched",
+      "reinit": null,
+      "init_seed": 1002
+    },
+    "LAT-P-rand2": {
+      "rep": "LAT-P-rand2",
+      "init": "official",
+      "reinit": null
+    },
+    "LAT-P-rand3": {
+      "rep": "LAT-P-rand3",
+      "init": "official",
+      "reinit": null
+    }
+  }
+}

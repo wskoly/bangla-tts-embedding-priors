@@ -71,7 +71,7 @@ def build_dataset(rep: str, subset: str, vocab_map: dict[str, int]):
 
 
 def expanded_checkpoint(vocab_size: int, run: Path, init: str = "official",
-                        reinit_rows: list[int] | None = None) -> Path:
+                        reinit_rows: list[int] | None = None, init_seed: int = EXPAND_SEED) -> Path:
     """Base checkpoint with the text embedding resized to `vocab_size` (+1 filler row).
 
     init="official": new rows ~ N(0, 1) (as f5 expand_model_embeddings; trained rows have std ~0.62).
@@ -83,7 +83,8 @@ def expanded_checkpoint(vocab_size: int, run: Path, init: str = "official",
     from safetensors.torch import load_file, save_file
     src = str(cached_path(BASE_CKPT))
     tag = "" if init == "official" and not reinit_rows else (
-        f"_{init}" + (f"_reinit{len(reinit_rows)}" if reinit_rows else ""))
+        f"_{init}" + (f"_reinit{len(reinit_rows)}" if reinit_rows else "")
+        + (f"_is{init_seed}" if init_seed != EXPAND_SEED else ""))  # C5a: init-seed variants (D-067)
     dst = run / f"pretrained_model_1250000_vocab{vocab_size}{tag}.safetensors"
     if dst.exists():
         return dst
@@ -94,7 +95,7 @@ def expanded_checkpoint(vocab_size: int, run: Path, init: str = "official",
     if n_new == 0 and not reinit_rows:
         shutil.copy2(src, dst)
         return dst
-    g = torch.Generator().manual_seed(EXPAND_SEED)
+    g = torch.Generator().manual_seed(init_seed)
     mu, sdv = old[1:].mean(dim=0), old[1:].std(dim=0)
     if init == "official":
         new = torch.randn((n_new, old.size(1)), generator=g, dtype=old.dtype)

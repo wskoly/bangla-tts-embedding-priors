@@ -205,8 +205,22 @@ def pron_to_lat_p_rand(pron: Pron) -> str:
     return pron_to_lat_p(pron).translate(_LAT_P_RAND_TABLE)
 
 
+# C5b (D-067): two further fixed derangements of the same 27-symbol alphabet, generated with random.Random(20261012)
+# and random.Random(20261013) (shuffle until no fixed point and no agreement with LAT_P_RAND_MAP). Frozen here.
+LAT_P_RAND2_MAP = {"'": "j", "-": "u", "D": "d", "E": "f", "N": "o", "O": "k", "T": "i", "a": "D", "b": "t",
+                   "c": "e", "d": "b", "e": "c", "f": "p", "g": "m", "h": "r", "i": "n", "j": "g", "k": "T",
+                   "l": "N", "m": "s", "n": "O", "o": "-", "p": "E", "r": "a", "s": "'", "t": "l", "u": "h"}
+LAT_P_RAND3_MAP = {"'": "u", "-": "l", "D": "i", "E": "b", "N": "O", "O": "r", "T": "g", "a": "e", "b": "m",
+                   "c": "t", "d": "j", "e": "T", "f": "D", "g": "E", "h": "s", "i": "a", "j": "c", "k": "h",
+                   "l": "'", "m": "d", "n": "p", "o": "f", "p": "-", "r": "k", "s": "o", "t": "n", "u": "N"}
+_LAT_P_RAND2_TABLE = str.maketrans(LAT_P_RAND2_MAP)
+_LAT_P_RAND3_TABLE = str.maketrans(LAT_P_RAND3_MAP)
+
+
 LEXICAL_CONVERTERS = {
     "LAT-P-rand": _make_lexical(pron_to_lat_p_rand),
+    "LAT-P-rand2": _make_lexical(lambda p: pron_to_lat_p(p).translate(_LAT_P_RAND2_TABLE)),
+    "LAT-P-rand3": _make_lexical(lambda p: pron_to_lat_p(p).translate(_LAT_P_RAND3_TABLE)),
     "LAT-P": _make_lexical(pron_to_lat_p),
     "LAT-P-dots": _make_lexical(lambda p: pron_to_lat_p(p, dots=True)),
     "IPA-P": _make_lexical(pron_to_ipa),
