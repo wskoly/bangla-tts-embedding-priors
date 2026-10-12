@@ -27,3 +27,6 @@ paper/*.log
 paper/*.out
 paper/*.synctex.gz
 paper/*.xdv
+
+# public sample page (built by tools/build_samples_page.py; ~MB of embedded audio)
+samples/bangla_tts_samples.html
