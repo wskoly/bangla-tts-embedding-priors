@@ -17,11 +17,13 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib import font_manager  # noqa: E402
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 NUM = json.loads((ROOT / "paper/numbers.json").read_text(encoding="utf-8"))
 OUT = ROOT / "paper/figs"
+font_manager.fontManager.addfont(str(ROOT / "paper/fonts/NotoSerifBengali-Regular.ttf"))  # Bangla glyphs (OFL)
 W = 6.5  # text width, inches
 PRE, FRESH, SCR = "#2a78d6", "#eb6834", "#1baf7a"
 RAMP = ["#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]  # BN-G -> +iv -> +vm -> +asp
@@ -264,7 +266,7 @@ def fig_long():
     floor(a, NUM["floor"]["slr37.W.test_seen"])
     a.set_title("(a) CER on the fixed set", color=INK)
     a.set_ylabel("CER %")
-    b.set_title("(b) Words with চ heard with ক", color=INK, fontfamily=["Nirmala UI", "Arial"])
+    b.set_title("(b) Words with চ heard with ক", color=INK, fontfamily=["Arial", "Noto Serif Bengali"])
     b.set_ylabel("% of such words")
     h, lab = a.get_legend_handles_labels()
     a.legend(h[::-1], lab[::-1], loc="center right")
