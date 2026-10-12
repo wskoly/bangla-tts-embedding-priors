@@ -50,6 +50,19 @@ def tests_c3(num: dict) -> None:
                             "unW": unw[0], "unV": unv[0], "verdict": c3.verdict(kind, sign, prim, sec)}
 
 
+def derived_c3(num: dict) -> None:
+    """C3 whole encoding path (BN-G-matched - BN-G-iv-vm-asp), for comparison with C1 H3-path. Derived from the C3
+    runs with the same G6 machinery, but NOT one of the 13 frozen C3 tests: label it as derived in the paper."""
+    arms = ("BN-G-matched", "BN-G-iv-vm-asp")
+    prim = c3.evaluate("diff", arms, "test_seen", c3.PRIMARY)
+    sec = c3.evaluate("diff", arms, "test_seen", c3.SECONDARY)
+    d, lo, hi, half, two_sd = prim
+    num["c3d.H3-path"] = {"d": d, "lo": lo, "hi": hi, "half": half, "twosd": two_sd, "w2v": sec[0],
+                          "unW": c3.evaluate("diff", arms, "test_unseen", c3.PRIMARY)[0],
+                          "unV": c3.evaluate("diff", arms, "test_unseen", c3.SECONDARY)[0],
+                          "verdict": c3.verdict("diff", +1, prim, sec)}
+
+
 def tests_c1(num: dict) -> None:
     for tid, kind, arms, sign, sub in c1.TESTS:
         other = "all" if sub == "covered" else "covered"
@@ -183,7 +196,7 @@ def tex(num: dict) -> str:
         L.append(f"\\@namedef{{V@{k}}}{{{v}}}")
 
     for k, t in num.items():
-        if k.startswith(("c3.", "c1.")):
+        if k.startswith(("c3.", "c1.", "c3d.")):
             for f in ("d", "lo", "hi", "w2v", "unW", "unV", "alt"):
                 if f in t:
                     put(f"{k}.{f}", fmt(t[f], signed=True))
@@ -234,7 +247,7 @@ def tex(num: dict) -> str:
 
 def main() -> int:
     num: dict = {}
-    for f in (tests_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab, floors):
+    for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab, floors):
         f(num)
     bad = check(num)
     if bad:
