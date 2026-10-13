@@ -12,6 +12,7 @@ ASR on the real recordings gives the floor. Whisper, test_seen, 3,000 updates, a
 from __future__ import annotations
 
 import csv
+import os
 import random
 import sys
 from collections import defaultdict
@@ -19,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
+os.environ["DATA_PROFILE"] = "rasa_bn_v1"  # analyze_c1 needs the Rasa manifest; analyze_c3 reads run dirs only
 import analyze_c1 as c1  # noqa: E402
 import analyze_c3 as c3  # noqa: E402
 

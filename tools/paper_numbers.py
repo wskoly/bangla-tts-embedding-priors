@@ -201,6 +201,27 @@ def controls_c5(num: dict) -> None:
     num["c5"] = {"tests": t, "spread": spread, "der": der}
 
 
+CONF_IDS = {"চ→ক": "c-k", "থ→ত": "th-t", "খ→ক": "kh-k", "ছ→চ": "ch-c", "ট→ত": "T-t", "ড→দ": "D-d", "ত→ট": "t-T",
+            "দ→ড": "d-D", "ব→ভ": "b-bh", "ং→ন": "N-n"}
+
+
+def letter_confusion(num: dict) -> None:
+    """Post hoc letter-prior confusions (D-076): pretrained minus fresh twin differences, parsed from the report
+    written by tools/letter_confusion.py."""
+    e, corpus, twins = {}, None, False
+    for line in (ROOT / "docs/reports/letter_confusion.md").read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            corpus, twins = line[3:].strip().lower(), False
+        elif line.startswith("### "):
+            twins = line.startswith("### Pretrained minus fresh")
+        elif twins and (m := re.match(r"\| (\S+→\S+) \| ([+-][\d.]+) \[([+-][\d.]+), ([+-][\d.]+)\] \| "
+                                      r"([+-][\d.]+) \[([+-][\d.]+), ([+-][\d.]+)\] \|", line)):
+            for twin, g in (("LAT-P", m.groups()[1:4]), ("LAT-G-det", m.groups()[4:7])):
+                e[f"{corpus}.{CONF_IDS[m[1]]}.{twin}"] = dict(zip(("d", "lo", "hi"), map(float, g)))
+    assert len(e) == 2 * 2 * len(CONF_IDS), len(e)
+    num["conf"] = e
+
+
 def check(num: dict) -> list[str]:
     bad = []
     for prefix, path in (("c3", "docs/reports/c3_hypothesis_tests.md"), ("c1", "docs/reports/c1_replication_tests.md")):
@@ -297,6 +318,9 @@ def tex(num: dict) -> str:
     for a, v in num["c5"]["der"].items():
         for i, s in enumerate((666, 1234)):
             put(f"c5.{a}.s{s}", fmt(v[i]))
+    for k, v in num["conf"].items():
+        for f in ("d", "lo", "hi"):
+            put(f"conf.{k}.{f}", f"{v[f]:+.1f}".replace("-", "$-$").replace("+", "$+$"))
     L.append("\\makeatother")
     return "\n".join(L) + "\n"
 
@@ -304,7 +328,7 @@ def tex(num: dict) -> str:
 def main() -> int:
     num: dict = {}
     for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab,
-              floors, sensitivity, controls_c5):
+              floors, sensitivity, controls_c5, letter_confusion):
         f(num)
     bad = check(num)
     if bad:

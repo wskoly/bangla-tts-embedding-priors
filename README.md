@@ -143,6 +143,7 @@ DATA_PROFILE=rasa_bn_v1 python tools/analyze_c1.py     # -> docs/reports/c1_repl
 python tools/analyze_c5.py                             # -> docs/reports/c5_controls.md
 python tools/analyze_x1.py                             # long-training check (exploratory)
 python tools/sensitivity_stats.py                      # post hoc -> docs/reports/sensitivity_stats.md
+python tools/letter_confusion.py                       # post hoc -> docs/reports/letter_confusion.md
 ```
 
 **Decision rule (G6).** A test passes when, in the predicted direction:
@@ -201,7 +202,10 @@ Audio samples for illustration (not evidence) are built by `tools/samples_synth.
 - **Scope:** one model, one language, about 1 h of data, a 3k-update budget, and one unseen speaker per corpus.
 - **Design:** the encoding steps are cumulative and order-dependent. LAT-G-asp uses different letters than ITRANS.
 - **Lexicon:** the Google lexicon is bn-BD, and its token coverage on the bn-IN Rasa seen-speaker test set is 84.7 %.
-- **Letter choices:** LAT-P writes চ as `c`, which the English prior reads as /k/ early in training (D-063).
+- **Letter choices:** LAT-P (from the lexicon) and LAT-G-asp write চ as `c`, which the English prior reads as /k/
+  early in training (D-063). Case spellings (`T`/`t`, `D`/`d` in LAT-P and ITRANS) push retroflex words toward the
+  dental letter with pretrained rows; `th`, `v` and `Ch` showed no clear effect (post hoc, D-076,
+  `docs/reports/letter_confusion.md`). No arm tested prior-aligned spellings such as `ch`/`chh`.
 - **Hardware:** the original machine hard-reset under sustained GPU load. Queues are resumable for that reason;
   see the decision log for every reset and rerun.
 
