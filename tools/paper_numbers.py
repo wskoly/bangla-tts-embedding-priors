@@ -174,6 +174,11 @@ def floors(num: dict) -> None:
     num["floor"] = out
 
 
+def sensitivity(num: dict) -> None:
+    """Post hoc sensitivity statistics (D-070), produced by tools/sensitivity_stats.py."""
+    num["sens"] = json.loads((OUT / "sensitivity.json").read_text(encoding="utf-8"))
+
+
 def check(num: dict) -> list[str]:
     bad = []
     for prefix, path in (("c3", "docs/reports/c3_hypothesis_tests.md"), ("c1", "docs/reports/c1_replication_tests.md")):
@@ -241,13 +246,25 @@ def tex(num: dict) -> str:
         put(f"vocab.{rep}.tok", f"{v['tok_per_utt']:.1f}")
     for k, v in num["floor"].items():
         put(f"floor.{k}", fmt(v))
+    pv = lambda x: "n/a" if x is None else ("$<$0.001" if x < 0.001 else f"{x:.3f}")  # noqa: E731
+    for k, v in num["sens"].items():
+        put(f"sens.{k}.d", fmt(v["d"], signed=True))
+        put(f"sens.{k}.lo", fmt(v["boot2_lo"], signed=True))
+        put(f"sens.{k}.hi", fmt(v["boot2_hi"], signed=True))
+        put(f"sens.{k}.p", pv(v["p_boot2"]))
+        put(f"sens.{k}.holm", pv(v["p_holm"]))
+        put(f"sens.{k}.agree", "n/a" if v["seeds_agree"] is None else f"{v['seeds_agree']}/{min(v['seeds'])}")
+        put(f"sens.{k}.rel", "n/a" if v["rel_change_pct"] is None else
+            f"{v['rel_change_pct']:+.0f}".replace("-", "$-$").replace("+", "$+$") + "\\%")
+        put(f"sens.{k}.dz", fmt(v["dz"], signed=True))
     L.append("\\makeatother")
     return "\n".join(L) + "\n"
 
 
 def main() -> int:
     num: dict = {}
-    for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab, floors):
+    for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab,
+              floors, sensitivity):
         f(num)
     bad = check(num)
     if bad:
