@@ -192,7 +192,9 @@ codes to systems; keep it private while a test runs.
 
 Audio samples for illustration (not evidence) are built by `tools/samples_synth.py` and
 `tools/build_samples_page.py`. Sentences are chosen by fixed rules (random test sentences, sentences containing
-চ, controls and a set of difficult sentences), not by quality.
+চ, controls and a set of difficult sentences), not by quality. The page `samples/bangla_tts_samples.html` loads
+its clips from `samples/audio/` only when they are played, so share the two together;
+`python tools/build_samples_page.py --single-file` embeds the audio in one file instead (slower to open).
 
 ## Known limitations
 
