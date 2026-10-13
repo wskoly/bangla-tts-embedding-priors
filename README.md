@@ -151,6 +151,15 @@ python tools/paper_figs.py       # figures at print size
 cd paper && latexmk main.tex     # XeLaTeX via paper/latexmkrc; or tectonic, Overleaf, arXiv (XeLaTeX)
 ```
 
+Fallback for venues without XeLaTeX (pdfLaTeX; every Bangla string is taken from a PDF typeset beforehand):
+
+```bash
+python tools/bn_glyphs.py        # paper/bn/glyphs.pdf + glyphs.tex; rerun after changing any \bn{...} string
+cd paper && latexmk -pdf -jobname=main-pdflatex main.tex
+```
+
+Submit `paper/bn/` with the sources; the fallback needs no system fonts beyond a standard TeX distribution.
+
 No number is typed by hand: `main.tex` uses `\V{key}` macros from `paper/numbers.tex`. Claims and their evidence
 levels are listed in `paper/claims.md`.
 
@@ -203,7 +212,7 @@ Audio samples for illustration (not evidence) are built by `tools/samples_synth.
 ```bibtex
 @misc{koly2026embeddingpriors,
   title  = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
-  author = {Koly, Wahid Sadique},
+  author = {Koly, Wahid Sadique and Adiba, Homaira},
   year   = {2026},
   note   = {Preprint}
 }

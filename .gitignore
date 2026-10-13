@@ -14,8 +14,9 @@ __pycache__/
 listening/listening_test.html
 listening/stimuli_map.json
 
-# compiled paper preview (build: tectonic/pdflatex)
+# compiled paper previews (XeLaTeX build and pdfLaTeX fallback)
 paper/main.pdf
+paper/main-pdflatex.pdf
 
 # LaTeX build by-products
 paper/*.aux
