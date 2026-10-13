@@ -275,11 +275,53 @@ def fig_long():
     plt.close(fig)
 
 
+# ------------------------------------------------------------------------------------------- 6. C5 controls
+def fig_c5():
+    c5 = NUM["c5"]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(W, 2.3), gridspec_kw={"width_ratios": [1.25, 1]})
+    arms = (("BN-G-matched", "BN-G-matched"), ("BN-G-iv-vm-asp", "BN-G-iv-vm-asp"), ("LAT-P-reinit", "LAT-P-reinit"))
+    for i, (key, lab) in enumerate(arms):
+        s = c5["spread"][key]
+        for vals, off, col, m, name in ((s["train"], -0.14, MUTED, "o", "training seed varied (init 666)"),
+                                        (s["init"], 0.14, FRESH, "D", "row-init seed varied (training 666)")):
+            a.plot([i + off] * 3, vals, ls="none", marker=m, color=col, label=name if i == 0 else None, **mk(ms=5))
+        a.annotate(f"SD {s['init_sd']:.1f}", (i + 0.14, max(s["init"])), xytext=(0, 4), textcoords="offset points",
+                   ha="center", va="bottom", fontsize=7, color=FRESH)
+        a.annotate(f"SD {s['train_sd']:.1f}", (i - 0.14, min(s["train"])), xytext=(0, -4), textcoords="offset points",
+                   ha="center", va="top", fontsize=7, color=INK2)
+    a.set_xticks(range(len(arms)))
+    a.set_xticklabels([x[1] for x in arms], color=INK)
+    a.set_xlim(-0.5, len(arms) - 0.5)
+    a.set_ylim(0, 92)
+    a.grid(axis="x", visible=False)
+    a.set_ylabel("CER % (test_seen)")
+    a.set_title("(a) Fresh-row arms: two sources of variance", color=INK)
+    a.legend(loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=2, handletextpad=0.3, columnspacing=1.0)
+
+    ders = (("LAT-P-rand", "rand (C3)"), ("LAT-P-rand2", "rand2"), ("LAT-P-rand3", "rand3"))
+    for i, (key, lab) in enumerate(ders):
+        b.plot([i, i], c5["der"][key], ls="none", marker="^", color=SCR,
+               label="scrambled (seeds 666, 1234)" if i == 0 else None, **mk(ms=5))
+    reinit = c5["spread"]["LAT-P-reinit"]["train"][:2]
+    b.axhline(sum(reinit) / 2, color=FRESH, lw=1.2, ls="--", label="LAT-P-reinit (fresh)")
+    b.axhline(arm("LAT-P"), color=PRE, lw=1.2, ls=":", label="LAT-P (pretrained)")
+    b.set_xticks(range(len(ders)))
+    b.set_xticklabels([d[1] for d in ders], color=INK)
+    b.set_xlim(-0.5, len(ders) - 0.5)
+    b.set_ylim(0, 92)
+    b.grid(axis="x", visible=False)
+    b.set_title("(b) Three scrambled assignments", color=INK)
+    b.legend(loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=2, handletextpad=0.3, columnspacing=1.0)
+    fig.tight_layout(w_pad=1.5)
+    fig.savefig(OUT / "c5.pdf")
+    plt.close(fig)
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     for old in ("lr.pdf", "size.pdf"):
         (OUT / old).unlink(missing_ok=True)
-    for f in (fig_design, fig_curves, fig_tests, fig_lr_size, fig_long):
+    for f in (fig_design, fig_curves, fig_tests, fig_lr_size, fig_long, fig_c5):
         f()
     print("figures:", sorted(p.name for p in OUT.glob("*.pdf")))
     return 0

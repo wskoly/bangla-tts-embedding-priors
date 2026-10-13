@@ -179,6 +179,28 @@ def sensitivity(num: dict) -> None:
     num["sens"] = json.loads((OUT / "sensitivity.json").read_text(encoding="utf-8"))
 
 
+def controls_c5(num: dict) -> None:
+    """Frozen C5 controls (D-072, D-073), parsed from the report written by tools/analyze_c5.py."""
+    t, spread, der = {}, {}, {}
+    for line in (ROOT / "docs/reports/c5_controls.md").read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\| (C5[ab]-[\w-]+) \| ([+-]?[\d.]+) \[([+-]?[\d.]+), ([+-]?[\d.]+)\] \| ([\d.]+) \| ([\d.]+) \| "
+                     r"([+-]?[\d.]+) \| (\w+) \|", line)
+        if m:
+            t[m[1]] = dict(zip(("d", "lo", "hi", "half", "twosd", "w2v"), map(float, m.groups()[1:7])), verdict=m[8])
+            continue
+        m = re.match(r"\| ([\w-]+) \| ([\d.]+) / ([\d.]+) / ([\d.]+) \| ([\d.]+) \| ([\d.]+) / ([\d.]+) / ([\d.]+) \| "
+                     r"([\d.]+) \|", line)
+        if m:
+            v = list(map(float, m.groups()[1:]))
+            spread[m[1]] = {"init": v[0:3], "init_sd": v[3], "train": v[4:7], "train_sd": v[7]}
+            continue
+        m = re.match(r"- (LAT-P-rand\d?): ([\d.]+) / ([\d.]+)", line)
+        if m:
+            der[m[1]] = [float(m[2]), float(m[3])]
+    assert len(t) == 6 and len(spread) == 3 and len(der) == 3, (len(t), len(spread), len(der))
+    num["c5"] = {"tests": t, "spread": spread, "der": der}
+
+
 def check(num: dict) -> list[str]:
     bad = []
     for prefix, path in (("c3", "docs/reports/c3_hypothesis_tests.md"), ("c1", "docs/reports/c1_replication_tests.md")):
@@ -257,6 +279,24 @@ def tex(num: dict) -> str:
         put(f"sens.{k}.rel", "n/a" if v["rel_change_pct"] is None else
             f"{v['rel_change_pct']:+.0f}".replace("-", "$-$").replace("+", "$+$") + "\\%")
         put(f"sens.{k}.dz", fmt(v["dz"], signed=True))
+    for k, v in num["c5"]["tests"].items():
+        for f in ("d", "lo", "hi", "w2v"):
+            put(f"c5.{k}.{f}", fmt(v[f], signed=True))
+        put(f"c5.{k}.half", fmt(v["half"]))
+        put(f"c5.{k}.twosd", fmt(v["twosd"]))
+        put(f"c5.{k}.verdict", v["verdict"])
+    for a, v in num["c5"]["spread"].items():
+        for i, s in enumerate((666, 1001, 1002)):
+            put(f"c5.{a}.init{s}", fmt(v["init"][i]))
+        for i, s in enumerate((666, 1234, 4242)):
+            put(f"c5.{a}.train{s}", fmt(v["train"][i]))
+        put(f"c5.{a}.initsd", fmt(v["init_sd"]))
+        put(f"c5.{a}.trainsd", fmt(v["train_sd"]))
+        put(f"c5.{a}.ratio", f"{v['init_sd'] / v['train_sd']:.0f}")
+        put(f"c5.{a}.twoinitsd", fmt(2 * v["init_sd"]))
+    for a, v in num["c5"]["der"].items():
+        for i, s in enumerate((666, 1234)):
+            put(f"c5.{a}.s{s}", fmt(v[i]))
     L.append("\\makeatother")
     return "\n".join(L) + "\n"
 
@@ -264,7 +304,7 @@ def tex(num: dict) -> str:
 def main() -> int:
     num: dict = {}
     for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab,
-              floors, sensitivity):
+              floors, sensitivity, controls_c5):
         f(num)
     bad = check(num)
     if bad:
