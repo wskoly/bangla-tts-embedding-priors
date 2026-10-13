@@ -28,11 +28,11 @@ variance. Directions are established; magnitudes refer to init seed 666.
 
 Evidence levels:
 - **exploratory**: hypotheses were formed from these runs.
-- **robustness**: tested by a plan frozen before the runs, on the same corpus (C3, commit `0c391f5`).
-- **replicated**: tested by a plan frozen before the runs, on a second corpus and Bangla variety (C1, commit
-  `1aefe31`).
+- **robustness**: tested by a plan frozen before the runs, on the same corpus (C3, tag `plan-C3`).
+- **replicated**: tested by a plan frozen before the runs, on a second corpus and Bangla variety (C1,
+  tag `plan-C1`).
 - **controls**: row-init seed and scrambled assignment, tested by a plan frozen before the runs on SLR37 (C5,
-  commit `72ba3d1`). All 6 tests pass.
+  tag `plan-C5`). All 6 tests pass.
 - **post hoc**: two-level bootstrap, Holm correction, per-seed agreement and effect sizes for all frozen tests
   (`docs/reports/sensitivity_stats.md`). They change no verdict.
 
