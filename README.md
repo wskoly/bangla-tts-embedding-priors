@@ -4,19 +4,25 @@ Code, configurations, frozen analysis plans and paper sources for a controlled s
 character-level TTS model (F5-TTS) to Bangla. The study separates two factors: (i) whether the input symbols have
 pretrained embedding rows, and (ii) the structure of the Bangla abugida script.
 
-Paper draft: [`paper/main.tex`](paper/main.tex) (arXiv preprint template, XeLaTeX).
+Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-0001-8869-9183)) and Homaira Adiba
+([ORCID 0000-0001-5285-9448](https://orcid.org/0000-0001-5285-9448)), independent researchers.
+
+Status: ongoing research. The repository is private for now and will be released when the work is complete.
+
+Paper draft: [`paper/main.tex`](paper/main.tex) (arXiv preprint template; XeLaTeX, with a pdfLaTeX fallback).
 Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
 
 ## Main findings
 
 All findings are about intelligibility measured with a Bangla ASR (CER), with F5-TTS v1 Base fine-tuned on about
-1 h of speech for 3,000 updates. Effect sizes are for the SLR37 seen speakers.
+1 h of speech for 3,000 updates. Effect sizes are for the SLR37 seen speakers. Signed values are contrasts
+Δ = CER(A) − CER(B) as defined in the paper; the other values are magnitudes.
 
 | | Finding | Status |
 |---|---|---|
-| H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (−22 pp CER) | direction: robustness (SLR37) + replicated (Rasa) + holds over 3 row-init draws |
-| H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (+52 pp): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments |
-| H3 | With fresh rows, merging vowel forms and splitting aspirates lowers CER (−48 pp over the path); an explicit inherent vowel is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
+| H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (22 pp lower CER) | direction: robustness (SLR37) + replicated (Rasa) + holds over 3 row-init draws |
+| H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (52 pp higher CER): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments |
+| H3 | With fresh rows, merging vowel forms and splitting aspirates lowers CER (48 pp over the path); an explicit inherent vowel is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
 | H4 | The benefit of pretrained rows is smaller for the restructured encoding (sub-additive) | robustness + replicated (one row-init draw) |
 | H5 | Effects persist at 3/10/30× embedding learning rate | robustness (SLR37 only) |
 | — | **Effect sizes depend on the random draw of the fresh rows**: H1a is −22, −17 and −67 pp and the H3 path +48, +28 and +38 pp for init seeds 666, 1001 and 1002 | C5a (pre-specified descriptive); sizes not established |
@@ -24,7 +30,9 @@ All findings are about intelligibility measured with a Bangla ASR (CER), with F5
 
 The fresh-row arms vary with an SD of 11.6–27.4 pp CER across row-init draws, against 0.6–1.6 pp across training
 seeds. The C3/C1 confidence intervals cover sentences and training seeds only, so they do not include this
-variance. Directions are established; magnitudes refer to init seed 666.
+variance. Directions are established; magnitudes refer to init seed 666. For example, phonemic Latin on fresh rows
+has lower CER than Bengali on fresh rows for every draw, but the margin ranges from about 36 pp (seed 666) to about 5 pp
+(seed 1002: 74.7 % vs 79.4 %).
 
 Evidence levels:
 - **exploratory**: hypotheses were formed from these runs.
@@ -45,16 +53,18 @@ src/train/        vocabularies (vocab.py), F5 fine-tuning wrapper (f5_train.py),
 src/infer/        F5 inference with ground-truth durations and fixed seeds
 src/eval/         ASR scoring (asr.py; Whisper-BengaliAI primary, wav2vec2 secondary), fixed eval set
 configs/          frozen run configs (pilot_*.json) and per-arm vocabularies (configs/vocab/)
-tools/            run queues (run_pilot_*.sh), frozen analyses (analyze_*.py), C1 data build, paper/figure scripts
+tools/            run queues (run_pilot_*.sh), frozen analyses (analyze_*.py), C1 data build, paper/figure scripts,
+                  Bangla glyphs for the pdfLaTeX build (bn_glyphs.py)
 docs/             plans (C1/C3/C4/C5), decision log, literature notes (docs/lit/), reports (docs/reports/)
-paper/            LaTeX sources, numbers.tex (generated), figs/ (generated), refs.bib, claims ledger
+paper/            LaTeX sources, numbers.tex (generated), figs/ (generated), bn/ (generated glyphs), refs.bib,
+                  claims ledger
 listening/        C4 listening-test template (page built by tools/c4_build_listening.py)
 tests/            unit tests for the converters (pytest)
 data/derived/     small tracked metadata (manifests, splits, indexes, ASR floors); audio is not tracked
 ```
 
 Not in git (large or regenerable): `data/raw/`, all `*.wav`, `runs/` (checkpoints, generated audio), the compiled
-PDF, the built listening page and the audio sample page.
+PDFs (`main.pdf`, `main-pdflatex.pdf`), the built listening page and the audio sample page.
 
 ## Replication
 
@@ -160,8 +170,14 @@ cd paper && latexmk -pdf -jobname=main-pdflatex main.tex
 
 Submit `paper/bn/` with the sources; the fallback needs no system fonts beyond a standard TeX distribution.
 
-No number is typed by hand: `main.tex` uses `\V{key}` macros from `paper/numbers.tex`. Claims and their evidence
-levels are listed in `paper/claims.md`.
+No number is typed by hand: `main.tex` uses `\V{key}` macros from `paper/numbers.tex`, and `\Vabs{key}` for
+the unsigned magnitude of a contrast in prose such as "lowers CER by ...". Claims and their evidence levels are listed in
+`paper/claims.md`.
+
+The paper cites no commit IDs. The commits that froze each analysis plan before its runs carry the annotated tags
+`plan-C3`, `plan-C1` and `plan-C5` (`git tag -n1`). If the history is rewritten before release, keep the tags
+(`git filter-repo` moves them; with `git filter-branch` use `--tag-name-filter cat`) and keep the original commit
+dates, which show that each plan came before its runs.
 
 ### 6. Listening test (C4, future work)
 
@@ -184,7 +200,7 @@ Audio samples for illustration (not evidence) are built by `tools/samples_synth.
   tens of pp with the draw (SLR37, one training seed per draw); Rasa, H4 and H5 were not re-tested over draws.
 - **Scope:** one model, one language, about 1 h of data, a 3k-update budget, and one unseen speaker per corpus.
 - **Design:** the encoding steps are cumulative and order-dependent. LAT-G-asp uses different letters than ITRANS.
-- **Lexicon:** the Google lexicon is bn-BD, and its token coverage on bn-IN Rasa is about 84 %.
+- **Lexicon:** the Google lexicon is bn-BD, and its token coverage on the bn-IN Rasa seen-speaker test set is 84.7 %.
 - **Letter choices:** LAT-P writes চ as `c`, which the English prior reads as /k/ early in training (D-063).
 - **Hardware:** the original machine hard-reset under sustained GPU load. Queues are resumable for that reason;
   see the decision log for every reset and rerun.
@@ -220,6 +236,6 @@ Audio samples for illustration (not evidence) are built by `tools/samples_synth.
 
 ## Licences
 
-Code: add a licence of your choice before publishing; none has been chosen yet. Data and resources keep their
+Code: a licence will be chosen before the public release; none has been chosen yet. Data and resources keep their
 own licences (table above). `paper/arxiv.sty` is MIT (kourgeorge/arxiv-style). Noto Serif Bengali is under the
 SIL OFL.
