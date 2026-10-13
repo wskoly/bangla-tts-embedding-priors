@@ -22,7 +22,7 @@ All findings are about intelligibility measured with a Bangla ASR (CER), with F5
 |---|---|---|
 | H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (22 pp lower CER) | direction: robustness (SLR37) + replicated (Rasa) + holds over 3 row-init draws |
 | H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (52 pp higher CER): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments |
-| H3 | With fresh rows, merging vowel forms and splitting aspirates lowers CER (48 pp over the path); an explicit inherent vowel is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
+| H3 | With fresh rows, the lossless re-encoding (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER (48 pp over the path, mostly from the last two steps); the inherent-vowel step alone is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
 | H4 | The benefit of pretrained rows is smaller for the restructured encoding (sub-additive) | robustness + replicated (one row-init draw) |
 | H5 | Effects persist at 3/10/30× embedding learning rate | robustness (SLR37 only; the 10× arms are exploration runs) |
 | — | **Effect sizes depend on the random draw of the fresh rows**: H1a is −22, −17 and −67 pp and the H3 path +48, +28 and +38 pp for init seeds 666, 1001 and 1002 | C5a (pre-specified descriptive); sizes not established |
@@ -88,7 +88,7 @@ Scheduler.
 
 | Resource | Licence | Where it goes |
 |---|---|---|
-| OpenSLR **SLR37** `bn_bd` (Kjartansson et al. 2018) | CC BY 4.0 | `data/raw/slr37/bn_bd/` |
+| OpenSLR **SLR37** `bn_bd` (Kjartansson et al. 2018) | CC BY-SA 4.0 | `data/raw/slr37/bn_bd/` |
 | Google **language-resources** Bangla lexicon | CC BY 4.0 | `data/external/google_language_resources_bn/lexicon.tsv` |
 | **Rasa** Bengali (`ai4bharat/Rasa`, gated, auto-approval) | CC BY 4.0 | built by `tools/c1_rasa_build.py` |
 | Noto Serif Bengali (paper font) | SIL OFL | `paper/fonts/` (included) |
