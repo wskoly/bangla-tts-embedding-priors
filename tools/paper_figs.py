@@ -148,7 +148,7 @@ def fig_curves():
         ("(b) Grapheme Latin text", [("LAT-G-det", "ITRANS, pretrained", PRE, "o"),
                                      ("LAT-G-asp", "LAT-G-asp, pretrained", PRE, "D"),
                                      ("LAT-G-det-reinit", "ITRANS, fresh", FRESH, "s")]),
-        ("(c) Bengali codepoints, fresh rows", [("BN-G-matched", "BN-G", RAMP[0], "o"),
+        ("(c) Bengali codepoints, fresh rows", [("BN-G-matched", "BN-G-matched", RAMP[0], "o"),
                                                 ("BN-G-iv", "+ inherent vowel", RAMP[1], "s"),
                                                 ("BN-G-iv-vm", "+ vowel merge", RAMP[2], "^"),
                                                 ("BN-G-iv-vm-asp", "+ aspirate split", RAMP[3], "D")]),
@@ -208,7 +208,7 @@ def fig_tests():
 def fig_lr_size():
     fig, (a, b) = plt.subplots(1, 2, figsize=(W, 2.3))
     mults = [1, 3, 10, 30]
-    for name, lab, col, m in (("BN-G-matched", "BN-G (fresh)", RAMP[0], "o"),
+    for name, lab, col, m in (("BN-G-matched", "BN-G-matched (fresh)", RAMP[0], "o"),
                               ("LAT-P-reinit", "LAT-P-reinit (fresh)", FRESH, "s"),
                               ("BN-G-iv-vm-asp", "BN-G-iv-vm-asp (fresh)", RAMP[3], "D")):
         ys = [NUM[f"c3arm.{name}" + ("" if x == 1 else f"-elr{x}")]["test_seen.W"]["mean"] for x in mults]
