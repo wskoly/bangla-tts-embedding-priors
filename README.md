@@ -1,8 +1,8 @@
-# Symbol Priors or Script Structure? Bangla adaptation of a Latin-pretrained TTS model
+# Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation
 
-Code, configurations, frozen analysis plans and paper sources for a controlled study of **why native-script
-adaptation of a Latin-pretrained, character-level TTS model (F5-TTS) fails for Bangla**, and how much of the
-failure is due to (i) missing pretrained symbol priors versus (ii) the structure of the abugida script.
+Code, configurations, frozen analysis plans and paper sources for a controlled study of adapting a Latin-pretrained,
+character-level TTS model (F5-TTS) to Bangla. The study separates two factors: (i) whether the input symbols have
+pretrained embedding rows, and (ii) the structure of the Bangla abugida script.
 
 Paper draft: [`paper/main.tex`](paper/main.tex) (arXiv preprint template, XeLaTeX).
 Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
@@ -10,21 +10,31 @@ Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/
 ## Main findings
 
 All findings are about intelligibility measured with a Bangla ASR (CER), with F5-TTS v1 Base fine-tuned on about
-1 h of speech for 3,000 updates.
+1 h of speech for 3,000 updates. Effect sizes are for the SLR37 seen speakers.
 
 | | Finding | Status |
 |---|---|---|
-| H1 | Reusing pretrained Latin rows for phonetically plausible text beats the same text on fresh rows (−22 pp CER) | robustness (SLR37) + replicated (Rasa) |
-| H2 | A scrambled relabelling onto pretrained rows is *worse* than fresh rows (+52 pp): rows carry sound-specific priors | robustness + replicated |
-| H3 | With fresh rows, merging vowel forms and splitting aspirates lowers CER (−48 pp over the path); an explicit inherent vowel has no clear effect | robustness; path replicated |
-| H4 | The two factors are sub-additive | robustness + replicated |
+| H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (−22 pp CER) | direction: robustness (SLR37) + replicated (Rasa) + holds over 3 row-init draws |
+| H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (+52 pp): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments |
+| H3 | With fresh rows, merging vowel forms and splitting aspirates lowers CER (−48 pp over the path); an explicit inherent vowel is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
+| H4 | The benefit of pretrained rows is smaller for the restructured encoding (sub-additive) | robustness + replicated (one row-init draw) |
 | H5 | Effects persist at 3/10/30× embedding learning rate | robustness (SLR37 only) |
+| — | **Effect sizes depend on the random draw of the fresh rows**: H1a is −22, −17 and −67 pp and the H3 path +48, +28 and +38 pp for init seeds 666, 1001 and 1002 | C5a (pre-specified descriptive); sizes not established |
 | — | With 5× longer training the ITRANS/phoneme gap closes to +0.5 pp: the effects concern limited-budget adaptation | exploratory, 1 seed |
+
+The fresh-row arms vary with an SD of 11.6–27.4 pp CER across row-init draws, against 0.6–1.6 pp across training
+seeds. The C3/C1 confidence intervals cover sentences and training seeds only, so they do not include this
+variance. Directions are established; magnitudes refer to init seed 666.
 
 Evidence levels:
 - **exploratory**: hypotheses were formed from these runs.
 - **robustness**: tested by a plan frozen before the runs, on the same corpus (C3, commit `0c391f5`).
-- **replicated**: tested by a plan frozen before the runs, on a second corpus and dialect (C1, commit `1aefe31`).
+- **replicated**: tested by a plan frozen before the runs, on a second corpus and Bangla variety (C1, commit
+  `1aefe31`).
+- **controls**: row-init seed and scrambled assignment, tested by a plan frozen before the runs on SLR37 (C5,
+  commit `72ba3d1`). All 6 tests pass.
+- **post hoc**: two-level bootstrap, Holm correction, per-seed agreement and effect sizes for all frozen tests
+  (`docs/reports/sensitivity_stats.md`). They change no verdict.
 
 ## Repository map
 
@@ -36,7 +46,7 @@ src/infer/        F5 inference with ground-truth durations and fixed seeds
 src/eval/         ASR scoring (asr.py; Whisper-BengaliAI primary, wav2vec2 secondary), fixed eval set
 configs/          frozen run configs (pilot_*.json) and per-arm vocabularies (configs/vocab/)
 tools/            run queues (run_pilot_*.sh), frozen analyses (analyze_*.py), C1 data build, paper/figure scripts
-docs/             plans (C1/C3/C4), decision log, literature notes (docs/lit/), reports (docs/reports/)
+docs/             plans (C1/C3/C4/C5), decision log, literature notes (docs/lit/), reports (docs/reports/)
 paper/            LaTeX sources, numbers.tex (generated), figs/ (generated), refs.bib, claims ledger
 listening/        C4 listening-test template (page built by tools/c4_build_listening.py)
 tests/            unit tests for the converters (pytest)
@@ -44,7 +54,7 @@ data/derived/     small tracked metadata (manifests, splits, indexes, ASR floors
 ```
 
 Not in git (large or regenerable): `data/raw/`, all `*.wav`, `runs/` (checkpoints, generated audio), the compiled
-PDF and the built listening page.
+PDF, the built listening page and the audio sample page.
 
 ## Replication
 
@@ -85,7 +95,8 @@ python tools/c1_rasa_build.py               # downloads only the needed shards, 
 ```
 
 Split, manifest and vocabulary files are tracked, together with their SHA-256 hashes in `docs/reports/`, so
-you can check that a rebuild matches.
+you can check that a rebuild matches. The C5 vocabularies `LAT-P-rand2` and `LAT-P-rand3` are tracked in
+`configs/vocab/`; their symbol inventory is identical to `LAT-P`.
 
 ### 3. Training and evaluation
 
@@ -106,53 +117,62 @@ Full studies are queued by `tools/run_pilot_*.sh`. The queues resume after a cra
 | Exploration (pilots v1_1–v7) | `pilot_v1_1` … `pilot_v7` | `run_pilot_v*.sh` | ~40 runs |
 | **C3** robustness (3rd seed, LR sweep) | `pilot_v8a`, `pilot_v8b` | `run_pilot_v8.sh` | 22 runs × ~35 min |
 | **C1** replication on Rasa | `pilot_c1a`, `pilot_c1b` (`data_profile: rasa_bn_v1`) | `run_pilot_c1a.sh`, `run_pilot_c1b.sh` | 24 runs × ~36 min |
+| **C5** controls (row-init seed, scrambled assignment) | `pilot_c5` | `run_pilot_c5.sh` | 10 runs × ~35 min |
 | Long-training check | `pilot_x1` | `run_pilot_x1.sh` | 2 runs × ~85 min |
 
 A run needs about 10 GB of VRAM. The fixed recipe for every arm is 3,000 updates, LR 1e-5 with 300 warm-up
 updates, 4,000 frames per update, bf16, NFE 32, CFG 2, ground-truth durations and a fixed seed per utterance.
+New embedding rows are drawn with a fixed generator (`init_seed`, default 666); the C5 arms named `*-is1001` and
+`*-is1002` use other seeds.
 
 ### 4. Analyses (frozen before their runs)
 
 ```bash
 python tools/analyze_c3.py                             # -> docs/reports/c3_hypothesis_tests.md
 DATA_PROFILE=rasa_bn_v1 python tools/analyze_c1.py     # -> docs/reports/c1_replication_tests.md
+python tools/analyze_c5.py                             # -> docs/reports/c5_controls.md
 python tools/analyze_x1.py                             # long-training check (exploratory)
+python tools/sensitivity_stats.py                      # post hoc -> docs/reports/sensitivity_stats.md
 ```
 
 **Decision rule (G6).** A test passes when, in the predicted direction:
 - |Δ| exceeds the 95 % paired-bootstrap CI half-width;
-- |Δ| exceeds twice the largest seed SD of the arms involved;
+- |Δ| exceeds twice the largest seed SD of the arms involved (C5a: the C3 training-seed SD as a stand-in);
 - wav2vec2 agrees in sign.
 
-Plans: `docs/C3_analysis_plan.md`, `docs/C1_analysis_plan.md`, `docs/C4_listening_plan.md`.
+Plans: `docs/C3_analysis_plan.md`, `docs/C1_analysis_plan.md`, `docs/C5_analysis_plan.md`,
+`docs/C4_listening_plan.md`.
 
 ### 5. Paper
 
 ```bash
 python tools/paper_numbers.py    # recompute every number; fails if any differs from the frozen reports
 python tools/paper_figs.py       # figures at print size
-cd paper && tectonic main.tex    # or Overleaf / arXiv with the XeLaTeX compiler
+cd paper && latexmk main.tex     # XeLaTeX via paper/latexmkrc; or tectonic, Overleaf, arXiv (XeLaTeX)
 ```
 
 No number is typed by hand: `main.tex` uses `\V{key}` macros from `paper/numbers.tex`. Claims and their evidence
 levels are listed in `paper/claims.md`.
 
-### 6. Listening test (C4, prepared, not yet run)
+### 6. Listening test (C4, future work)
 
-```bash
-python tools/c4_build_listening.py   # -> listening/listening_test.html (self-contained, ~4.6 MB)
-```
+The current protocol is `docs/C4_listening_plan.md` (version 2, following ITU-T P.808). It measures ACR
+naturalness, listener transcription and a pronunciation rating separately, with sample sizes fixed in advance. No
+rating has been collected.
 
-The test has two parts:
-- **Ratings:** 10 sentences in MUSHRA style (5 systems, the hidden reference and a 3.5 kHz anchor).
-- **A/B choices:** 16 pairs.
+`tools/c4_build_listening.py` still builds the earlier version-1 page (MUSHRA-style ratings and A/B choices), which
+the version-2 plan supersedes; building the version-2 page is future work. `listening/stimuli_map.json` maps opaque
+codes to systems; keep it private while a test runs.
 
-The analysis plan was frozen before collection. `listening/stimuli_map.json` maps the opaque codes to systems; keep
-it private while the test runs.
+Audio samples for illustration (not evidence) are built by `tools/samples_synth.py` and
+`tools/build_samples_page.py`. Sentences are chosen by fixed rules (random test sentences, sentences containing
+চ, controls and a set of difficult sentences), not by quality.
 
 ## Known limitations
 
-- **Measurement:** intelligibility is measured by ASR only; naturalness has not been assessed yet (C4 pending).
+- **Measurement:** intelligibility is measured by ASR only; naturalness has not been assessed (C4 not run).
+- **Row initialization:** all C3/C1 arms share one draw of the fresh rows. C5a shows that effect sizes change by
+  tens of pp with the draw (SLR37, one training seed per draw); Rasa, H4 and H5 were not re-tested over draws.
 - **Scope:** one model, one language, about 1 h of data, a 3k-update budget, and one unseen speaker per corpus.
 - **Design:** the encoding steps are cumulative and order-dependent. LAT-G-asp uses different letters than ITRANS.
 - **Lexicon:** the Google lexicon is bn-BD, and its token coverage on bn-IN Rasa is about 84 %.
@@ -162,26 +182,27 @@ it private while the test runs.
 
 ## Future work
 
-1. **Run the C4 listening test.** Recruit at least 15 native listeners and analyse per `docs/C4_listening_plan.md`.
-2. **Use a second abugida (C2).** Run the same encoding path and reuse controls on Hindi (Devanagari) to test
+1. **Run the C4 listening test.** Build the version-2 (P.808) page and analyse per `docs/C4_listening_plan.md`.
+2. **Estimate effect sizes over row-init draws.** Repeat the fresh-row arms with several init seeds × training seeds
+   on both corpora, and report intervals that include both sources of variance (D-073).
+3. **Use a second abugida (C2).** Run the same encoding path and reuse controls on Hindi (Devanagari) to test
    generality beyond Bangla.
-3. **Choose letters to fit the prior.** Choose romanization letters by measuring the pretrained model's zero-shot
+4. **Choose letters to fit the prior.** Choose romanization letters by measuring the pretrained model's zero-shot
    reading of candidate spellings, e.g. `ch` vs `c` for চ. Then test a prior-aligned phonemic arm (D-063).
-4. **Test budget and convergence curves.** Run multi-seed long-training and epoch-scaled data-size curves. They
+5. **Test budget and convergence curves.** Run multi-seed long-training and epoch-scaled data-size curves. They
    would show whether any representation advantage survives at convergence (D-042, D-065).
-5. **Try other models and initializations.** Test a second TTS architecture, and smarter initialization of new
-   rows (e.g. from phonetically similar Latin rows, cf. WECHSEL/FOCUS).
-6. **Analyse errors by phonological category.** Use phone-level scoring for the inherent vowel, conjuncts,
+6. **Try other models and initializations.** Test a second TTS architecture, and smarter initialization of new
+   rows (e.g. from phonetically similar Latin rows, cf. WECHSEL/FOCUS), which may also reduce init sensitivity.
+7. **Analyse errors by phonological category.** Use phone-level scoring for the inherent vowel, conjuncts,
    aspiration, retroflex vs dental, and nasalization.
-7. **Check coverage of uncovered text.** Evaluate LAT-P with a bn-IN lexicon or a stronger G2P on out-of-lexicon
+8. **Check coverage of uncovered text.** Evaluate LAT-P with a bn-IN lexicon or a stronger G2P on out-of-lexicon
    words, and evaluate ITRANS on rare words and names.
 
 ## Citation
 
 ```bibtex
-@misc{koly2026symbolpriors,
-  title  = {Symbol Priors or Script Structure? Why Native-Script Adaptation of a Latin-Pretrained TTS Model
-            Fails for Bangla},
+@misc{koly2026embeddingpriors,
+  title  = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
   author = {Koly, Wahid Sadique},
   year   = {2026},
   note   = {Preprint}
