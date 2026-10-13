@@ -2,7 +2,7 @@
 
 Every figure is drawn at its final printed size (full text width = 6.5 in), so the 8 pt text is printed at 8 pt.
 Colour = embedding-row condition, fixed across figures (validated palette, slots 1-3 pass all-pairs CVD):
-pretrained rows = blue, fresh (matched-init) rows = orange, scrambled relabeling = aqua. The Bengali-codepoint
+pretrained rows = blue, fresh (matched-init) rows = orange, scrambled assignment = aqua. The Bengali-codepoint
 encoding path is an ordinal one-hue ramp (validated --ordinal). Every series also has its own marker and a legend
 or direct label, so identity never depends on colour alone (aqua is below 3:1 contrast on white).
     python tools/paper_figs.py
@@ -144,7 +144,7 @@ def fig_design():
 def fig_curves():
     panels = [
         ("(a) Phonemic Latin text", [("LAT-P", "pretrained rows", PRE, "o"), ("LAT-P-reinit", "fresh rows", FRESH, "s"),
-                                     ("LAT-P-rand", "scrambled relabel", SCR, "^")]),
+                                     ("LAT-P-rand", "scrambled assignment", SCR, "^")]),
         ("(b) Grapheme Latin text", [("LAT-G-det", "ITRANS, pretrained", PRE, "o"),
                                      ("LAT-G-asp", "LAT-G-asp, pretrained", PRE, "D"),
                                      ("LAT-G-det-reinit", "ITRANS, fresh", FRESH, "s")]),
