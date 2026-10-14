@@ -222,6 +222,15 @@ def letter_confusion(num: dict) -> None:
     num["conf"] = e
 
 
+def compute(num: dict) -> None:
+    """Training compute over every run of the project (exploration and confirmatory), from each train_done.json."""
+    runs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "runs").glob("*/*/train_done.json"))]
+    m3k = [r["wall_s"] / 60 for r in runs if r["updates"] == 3000]
+    num["compute"] = {"runs": len(runs), "runs3k": len(m3k), "median3k_min": statistics.median(m3k),
+                      "gpu_h": sum(r["wall_s"] for r in runs) / 3600,
+                      "vram_gb": max(r["peak_vram_reserved_gb"] for r in runs)}
+
+
 def check(num: dict) -> list[str]:
     bad = []
     for prefix, path in (("c3", "docs/reports/c3_hypothesis_tests.md"), ("c1", "docs/reports/c1_replication_tests.md")):
@@ -321,6 +330,12 @@ def tex(num: dict) -> str:
     for k, v in num["conf"].items():
         for f in ("d", "lo", "hi"):
             put(f"conf.{k}.{f}", f"{v[f]:+.1f}".replace("-", "$-$").replace("+", "$+$"))
+    c = num["compute"]
+    put("compute.runs", str(c["runs"]))
+    put("compute.runs3k", str(c["runs3k"]))
+    put("compute.median3k", f"{c['median3k_min']:.0f}")
+    put("compute.gpuh", f"{c['gpu_h']:.0f}")
+    put("compute.vram", f"{c['vram_gb']:.1f}")
     L.append("\\makeatother")
     return "\n".join(L) + "\n"
 
@@ -328,7 +343,7 @@ def tex(num: dict) -> str:
 def main() -> int:
     num: dict = {}
     for f in (tests_c3, derived_c3, tests_c1, arms_c3, arms_c1, long_training, c_to_k_rates, baseline_and_curves, vocab,
-              floors, sensitivity, controls_c5, letter_confusion):
+              floors, sensitivity, controls_c5, letter_confusion, compute):
         f(num)
     bad = check(num)
     if bad:
