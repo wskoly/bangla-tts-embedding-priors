@@ -9,7 +9,8 @@ Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-
 
 Status: ongoing research. The repository is private for now and will be released when the work is complete.
 
-Paper draft: [`paper/main.tex`](paper/main.tex) (arXiv preprint template; XeLaTeX, with a pdfLaTeX fallback).
+Paper draft: [`paper/main.tex`](paper/main.tex) (TMLR style, preprint mode; XeLaTeX). Plan: preprint on TechRxiv
+(no endorsement needed), then submission to TMLR (no fees; anonymous mode of the same source).
 Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
 
 ## Main findings
@@ -53,10 +54,9 @@ src/train/        vocabularies (vocab.py), F5 fine-tuning wrapper (f5_train.py),
 src/infer/        F5 inference with ground-truth durations and fixed seeds
 src/eval/         ASR scoring (asr.py; Whisper-BengaliAI primary, wav2vec2 secondary), fixed eval set
 configs/          frozen run configs (pilot_*.json) and per-arm vocabularies (configs/vocab/)
-tools/            run queues (run_pilot_*.sh), frozen analyses (analyze_*.py), C1 data build, paper/figure scripts,
-                  Bangla glyphs for the pdfLaTeX build (bn_glyphs.py)
+tools/            run queues (run_pilot_*.sh), frozen analyses (analyze_*.py), C1 data build, paper/figure scripts
 docs/             plans (C1/C3/C4/C5), decision log, literature notes (docs/lit/), reports (docs/reports/)
-paper/            LaTeX sources, numbers.tex (generated), figs/ (generated), bn/ (generated glyphs), refs.bib,
+paper/            LaTeX sources (TMLR style files), numbers.tex (generated), figs/ (generated), refs.bib,
                   claims ledger
 listening/        C4 listening-test template (page built by tools/c4_build_listening.py)
 tests/            unit tests for the converters (pytest)
@@ -64,7 +64,7 @@ data/derived/     small tracked metadata (manifests, splits, indexes, ASR floors
 ```
 
 Not in git (large or regenerable): `data/raw/`, all `*.wav`, `runs/` (checkpoints, generated audio), the compiled
-PDFs (`main.pdf`, `main-pdflatex.pdf`), the built listening page and the audio sample page.
+PDF (`main.pdf`), the built listening page and the audio sample page.
 
 ## Replication
 
@@ -159,17 +159,12 @@ Plans: `docs/C3_analysis_plan.md`, `docs/C1_analysis_plan.md`, `docs/C5_analysis
 ```bash
 python tools/paper_numbers.py    # recompute every number; fails if any differs from the frozen reports
 python tools/paper_figs.py       # figures at print size
-cd paper && latexmk main.tex     # XeLaTeX via paper/latexmkrc; or tectonic, Overleaf, arXiv (XeLaTeX)
+cd paper && latexmk main.tex     # XeLaTeX + BibTeX via paper/latexmkrc (also tectonic or Overleaf)
 ```
 
-Fallback for venues without XeLaTeX (pdfLaTeX; every Bangla string is taken from a PDF typeset beforehand):
-
-```bash
-python tools/bn_glyphs.py        # paper/bn/glyphs.pdf + glyphs.tex; rerun after changing any \bn{...} string
-cd paper && latexmk -pdf -jobname=main-pdflatex main.tex
-```
-
-Submit `paper/bn/` with the sources; the fallback needs no system fonts beyond a standard TeX distribution.
+`\usepackage[preprint]{tmlr}` names the authors (the TechRxiv PDF). For the TMLR submission, switch to
+`\usepackage{tmlr}`: the authors are replaced by "Anonymous authors" and the header reads "Under review".
+Do not link the named preprint from the submission.
 
 No number is typed by hand: `main.tex` uses `\V{key}` macros from `paper/numbers.tex`, and `\Vabs{key}` for
 the unsigned magnitude of a contrast in prose such as "lowers CER by ...". Claims and their evidence levels are listed in
@@ -243,5 +238,6 @@ its clips from `samples/audio/` only when they are played, so share the two toge
 ## Licences
 
 Code: a licence will be chosen before the public release; none has been chosen yet. Data and resources keep their
-own licences (table above). `paper/arxiv.sty` is MIT (kourgeorge/arxiv-style). Noto Serif Bengali is under the
+own licences (table above). `paper/tmlr.sty` and `paper/tmlr.bst` are Apache-2.0 (JmlrOrg/tmlr-style-file; licence in
+`paper/tmlr-LICENSE.txt`). Noto Serif Bengali is under the
 SIL OFL.
