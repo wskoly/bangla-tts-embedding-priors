@@ -64,7 +64,7 @@ data/derived/     small tracked metadata (manifests, splits, indexes, ASR floors
 ```
 
 Not in git (large or regenerable): `data/raw/`, all `*.wav`, `runs/` (checkpoints, generated audio), the compiled
-PDF (`main.pdf`), the built listening page and the audio sample page.
+PDF (`main.pdf`) and the built listening page. The audio sample page and its clips (`samples/`) are tracked.
 
 ## Replication
 
@@ -159,6 +159,7 @@ Plans: `docs/C3_analysis_plan.md`, `docs/C1_analysis_plan.md`, `docs/C5_analysis
 ```bash
 python tools/paper_numbers.py    # recompute every number; fails if any differs from the frozen reports
 python tools/paper_figs.py       # figures at print size
+python tools/paper_transcripts.py  # appendix table of example transcripts (paper/transcripts.tex)
 cd paper && latexmk main.tex     # XeLaTeX + BibTeX via paper/latexmkrc (also tectonic or Overleaf)
 ```
 
@@ -190,6 +191,9 @@ Audio samples for illustration (not evidence) are built by `tools/samples_synth.
 চ, controls and a set of difficult sentences), not by quality. The page `samples/bangla_tts_samples.html` loads
 its clips from `samples/audio/` only when they are played, so share the two together;
 `python tools/build_samples_page.py --single-file` embeds the audio in one file instead (slower to open).
+The page is tracked in git and was extended by hand after its last build (paper header, result charts):
+rerunning `build_samples_page.py` overwrites those additions. The natural-speech clips come from SLR37
+(CC BY-SA 4.0) and Rasa (CC BY 4.0); keep the attribution when the page is published.
 
 ## Known limitations
 

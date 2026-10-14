@@ -29,6 +29,3 @@ paper/*.synctex.gz
 paper/*.synctex(busy)
 paper/*.xdv
 
-# public sample page and its audio (built by tools/build_samples_page.py)
-samples/bangla_tts_samples.html
-samples/audio/
