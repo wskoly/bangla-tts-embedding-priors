@@ -13,6 +13,21 @@ Paper draft: [`paper/main.tex`](paper/main.tex) (TMLR style, preprint mode; XeLa
 (no endorsement needed), then submission to TMLR (no fees; anonymous mode of the same source).
 Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
 
+## Abstract
+
+Character-level text-to-speech (TTS) models pretrained on Latin-script data are usually adapted to a new language by
+adding its characters to the vocabulary. We ask why this works poorly for Bangla, an abugida, when F5-TTS is
+fine-tuned on one hour of speech for 3,000 updates: native Bengali characters give a character error rate (CER) of
+67.96%, under an ASR model that scores 1.93% on real recordings. Controlled input representations separate two causes.
+On identical phonemic Latin text, pretrained embedding rows lower CER by 22.04 percentage points (pp) relative to
+freshly initialized rows, while assigning the same rows to the wrong sounds raises it by 51.53 pp. With fresh rows, a
+lossless re-encoding of Bengali text (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER by
+47.56 pp, and pretrained rows help this restructured encoding less than a standard transliteration. All five tests
+specified before the runs replicate on a second corpus of another Bangla variety, and the directions hold across three
+random draws of the new embeddings; the effect sizes, however, vary strongly with the draw. In an exploratory run with
+five times more updates, the gap between the two Latin representations shrinks to 0.54 pp, so the findings concern
+adaptation under a limited training budget.
+
 ## Main findings
 
 All findings are about intelligibility measured with a Bangla ASR (CER), with F5-TTS v1 Base fine-tuned on about
@@ -194,6 +209,27 @@ its clips from `samples/audio/` only when they are played, so share the two toge
 The page is tracked in git and was extended by hand after its last build (paper header, result charts):
 rerunning `build_samples_page.py` overwrites those additions. The natural-speech clips come from SLR37
 (CC BY-SA 4.0) and Rasa (CC BY 4.0); keep the attribution when the page is published.
+
+## Preprint and submission checklist
+
+**TechRxiv preprint** (no endorsement needed; screened, DOI):
+- Build `paper/main.pdf` with `\usepackage[preprint]{tmlr}` (the current setting; names the authors).
+- Account with ORCID; upload the PDF (under 10 MB); paste the abstract above; add both authors.
+- After the DOI exists, fill the preprint link on the sample page and in this README, and add the link to the
+  paper's availability section (TechRxiv version only).
+
+**TMLR submission** (no fees; double-blind on OpenReview):
+- Both authors need complete, active OpenReview profiles; create them early (profiles without an institutional
+  email may wait for moderation).
+- Switch to `\usepackage{tmlr}` and rebuild: authors become "Anonymous authors", the header reads "Under review",
+  and the PDF metadata carries no author names.
+- Do not link the TechRxiv version, the sample page or this repository from the submission; the availability
+  section already names no URL.
+- Funding (none) and the Broader Impact statement are in the paper; the OpenReview form also asks for funding,
+  competing interests and suggested action editors.
+- Supplementary material, if any, must be anonymized (PDF or ZIP, up to 100 MB).
+- TMLR does not accept papers that overlap with prior archival publications; a preprint on a preprint server is
+  allowed.
 
 ## Known limitations
 
