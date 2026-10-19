@@ -23,7 +23,7 @@ On identical phonemic Latin text, pretrained embedding rows lower CER by 22.04 p
 freshly initialized rows, while assigning the same rows to the wrong sounds raises it by 51.53 pp. With fresh rows, a
 lossless re-encoding of Bengali text (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER by
 47.56 pp, and pretrained rows help this restructured encoding less than a standard transliteration. All five tests
-specified before the runs replicate on a second corpus of another Bangla variety, and the directions hold across three
+specified before the runs replicate on a second corpus of another Bangla variety, and, where tested, the directions hold across three
 random draws of the new embeddings; the effect sizes, however, vary strongly with the draw. In an exploratory run with
 five times more updates, the gap between the two Latin representations shrinks to 0.54 pp, so the findings concern
 adaptation under a limited training budget.
