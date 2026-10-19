@@ -103,7 +103,7 @@ Scheduler.
 
 | Resource | Licence | Where it goes |
 |---|---|---|
-| OpenSLR **SLR37** `bn_bd` (Kjartansson et al. 2018) | CC BY-SA 4.0 | `data/raw/slr37/bn_bd/` |
+| OpenSLR **SLR37** `bn_bd` (Sodimana et al. 2018) | CC BY-SA 4.0 | `data/raw/slr37/bn_bd/` |
 | Google **language-resources** Bangla lexicon | CC BY 4.0 | `data/external/google_language_resources_bn/lexicon.tsv` |
 | **Rasa** Bengali (`ai4bharat/Rasa`, gated, auto-approval) | CC BY 4.0 | built by `tools/c1_rasa_build.py` |
 | Noto Serif Bengali (paper font) | SIL OFL | `paper/fonts/` (included) |
