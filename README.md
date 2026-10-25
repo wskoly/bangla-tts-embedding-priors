@@ -18,7 +18,7 @@ Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/
 Character-level text-to-speech (TTS) models pretrained on Latin-script data are usually adapted to a new language by
 adding its characters to the vocabulary. We ask why this works poorly for Bangla, an abugida, when F5-TTS is
 fine-tuned on one hour of speech for 3,000 updates: native Bengali characters give a character error rate (CER) of
-67.96%, under an ASR model that scores 1.93% on real recordings. Controlled input representations separate two causes.
+67.96%, under an ASR model that scores 1.93% on real recordings. Controlled input representations separate two factors.
 On identical phonemic Latin text, pretrained embedding rows lower CER by 22.04 percentage points (pp) relative to
 freshly initialized rows, while assigning the same rows to the wrong sounds raises it by 51.53 pp. With fresh rows, a
 lossless re-encoding of Bengali text (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER by
@@ -36,8 +36,8 @@ All findings are about intelligibility measured with a Bangla ASR (CER), with F5
 
 | | Finding | Status |
 |---|---|---|
-| H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (22 pp lower CER) | direction: robustness (SLR37) + replicated (Rasa) + holds over 3 row-init draws |
-| H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (52 pp higher CER): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments |
+| H1 | Pretrained Latin rows beat fresh rows for the same phonemic text (22 pp lower CER) | direction: robustness (SLR37) + replicated (Rasa); H1a direction holds over 3 row-init draws (one training seed each) |
+| H2 | A scrambled assignment of pretrained rows is *worse* than fresh rows (52 pp higher CER): rows carry sound-specific priors | robustness + replicated + holds for 3 scrambled assignments; fresh comparator from one row-init draw, so the size depends on that draw |
 | H3 | With fresh rows, the lossless re-encoding (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER (48 pp over the path, mostly from the last two steps); the inherent-vowel step alone is inconclusive | single steps: robustness; path: replicated + holds over 3 row-init draws |
 | H4 | The benefit of pretrained rows is smaller for the restructured encoding (sub-additive) | robustness + replicated (one row-init draw) |
 | H5 | Effects persist at 3/10/30× embedding learning rate | robustness (SLR37 only; the 10× arms are exploration runs) |
@@ -45,9 +45,10 @@ All findings are about intelligibility measured with a Bangla ASR (CER), with F5
 | — | With 5× longer training the ITRANS/phoneme gap closes to +0.5 pp: the effects concern limited-budget adaptation | exploratory, 1 seed |
 
 The fresh-row arms vary with an SD of 11.6–27.4 pp CER across row-init draws, against 0.6–1.6 pp across training
-seeds. The C3/C1 confidence intervals cover sentences and training seeds only, so they do not include this
-variance. Directions are established; magnitudes refer to init seed 666. For example, phonemic Latin on fresh rows
-has lower CER than Bengali on fresh rows for every draw, but the margin ranges from about 36 pp (seed 666) to about 5 pp
+seeds. The C3/C1 confidence intervals cover sentence sampling and the 2σ gate covers training seeds, so neither
+includes this variance. Where tested, the directions held for all three draws (one training seed each), which shows
+they are not tied to one draw, not that they hold for every draw; magnitudes refer to init seed 666. For example,
+phonemic Latin on fresh rows has lower CER than Bengali on fresh rows for each of the three draws, but the margin ranges from about 36 pp (seed 666) to about 5 pp
 (seed 1002: 74.7 % vs 79.4 %).
 
 Evidence levels:
@@ -235,7 +236,8 @@ rerunning `build_samples_page.py` overwrites those additions. The natural-speech
 
 - **Measurement:** intelligibility is measured by ASR only; naturalness has not been assessed (C4 not run).
 - **Row initialization:** all C3/C1 arms share one draw of the fresh rows. C5a shows that effect sizes change by
-  tens of pp with the draw (SLR37, one training seed per draw); Rasa, H4 and H5 were not re-tested over draws.
+  tens of pp with the draw (SLR37, one training seed per draw); Rasa, H1b, the single H3 steps, H2 (against other
+  fresh-row draws), H4 and H5 were not re-tested over draws.
 - **Scope:** one model, one language, about 1 h of data, a 3k-update budget, and one unseen speaker per corpus.
 - **Design:** the encoding steps are cumulative and order-dependent. LAT-G-asp uses different letters than ITRANS.
 - **Lexicon:** the Google lexicon is bn-BD, and its token coverage on the bn-IN Rasa seen-speaker test set is 84.7 %.
