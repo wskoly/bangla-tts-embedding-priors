@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper and this repository."
+title: "Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation: code and analysis"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/wskoly/bangla-tts-embedding-priors"
+authors:
+  - family-names: Koly
+    given-names: Wahid Sadique
+    orcid: "https://orcid.org/0000-0001-8869-9183"
+  - family-names: Adiba
+    given-names: Homaira
+    orcid: "https://orcid.org/0000-0001-5285-9448"
+keywords:
+  - text-to-speech
+  - Bangla
+  - Bengali
+  - low-resource
+  - character embeddings
+  - transliteration
+  - F5-TTS
+preferred-citation:
+  type: article
+  title: "Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation"
+  authors:
+    - family-names: Koly
+      given-names: Wahid Sadique
+      orcid: "https://orcid.org/0000-0001-8869-9183"
+    - family-names: Adiba
+      given-names: Homaira
+      orcid: "https://orcid.org/0000-0001-5285-9448"
+  year: 2026
+  notes: "Preprint; DOI to be added when issued."

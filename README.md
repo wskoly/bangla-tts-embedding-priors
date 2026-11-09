@@ -7,7 +7,8 @@ pretrained embedding rows, and (ii) the structure of the Bangla abugida script.
 Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-0001-8869-9183)) and Homaira Adiba
 ([ORCID 0000-0001-5285-9448](https://orcid.org/0000-0001-5285-9448)), independent researchers.
 
-Status: ongoing research. The repository is private for now and will be released when the work is complete.
+Status: ongoing research. Code and history are public at
+https://github.com/wskoly/bangla-tts-embedding-priors (code under Apache-2.0; data under the licences below).
 
 Paper: [`paper/main.tex`](paper/main.tex) (TMLR style, preprint mode; XeLaTeX) is the source of the preprint
 (Preprints.org). The journal target is PLOS ONE (D-096); TMLR desk-rejected the paper on 2026-11-08 (D-095), and the
@@ -287,7 +288,17 @@ rerunning `build_samples_page.py` overwrites those additions. The natural-speech
 
 ## Licences
 
-Code: a licence will be chosen before the public release; none has been chosen yet. Data and resources keep their
-own licences (table above). `paper/tmlr.sty` and `paper/tmlr.bst` are Apache-2.0 (JmlrOrg/tmlr-style-file; licence in
-`paper/tmlr-LICENSE.txt`). Noto Serif Bengali is under the
-SIL OFL.
+| Part | Licence |
+|---|---|
+| Code (`src/`, `tools/`, `tests/`, `configs/`) | Apache-2.0, see `LICENSE`. Copyright 2026 Wahid Sadique Koly and Homaira Adiba. |
+| Files derived from SLR37 (`data/derived/slr37_bn_bd/`, `splits/`, `audio24k_v1/`, `eval/`, `asr_floor_v1/`, `rep_bench_v1/`, `g2p/`) | CC BY-SA 4.0, as SLR37 (Sodimana et al. 2018) |
+| Files derived from Rasa (`data/derived/rasa_bn/`, `audio24k_rasa_v1/`, `eval_rasa_v1/`, `asr_floor_rasa_v1/`) | CC BY 4.0, as Rasa (Varadhan et al. 2024) |
+| Google Bangla lexicon (`data/external/google_language_resources_bn/`) and the curation files in `data/curation/` | CC BY 4.0 (see the `LICENSE` and `PROVENANCE.txt` there) |
+| Audio samples (`samples/`) | Synthetic speech from models fine-tuned on SLR37 and Rasa, in the voices of those corpora's speakers: CC BY-SA 4.0 for SLR37 voices, CC BY 4.0 for Rasa voices. Do not use them to imitate the speakers. |
+| Paper text, figures and documentation (`paper/`, `docs/`) | CC BY 4.0 |
+| `paper/tmlr.sty`, `paper/tmlr.bst` | Apache-2.0 (JmlrOrg/tmlr-style-file; `paper/tmlr-LICENSE.txt`) |
+| `paper/nejlt.sty`, `paper/nejlt_bib.bst` | MIT (NEJLT template; `paper/nejlt-LICENSE.txt`) |
+| Noto Serif Bengali (`paper/fonts/`) | SIL Open Font License (`paper/fonts/OFL.txt`) |
+
+Model checkpoints are not released. The pretrained F5-TTS weights are not part of this repository and keep their own
+licence.
