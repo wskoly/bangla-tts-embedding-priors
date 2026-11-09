@@ -9,12 +9,9 @@ Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-
 
 Status: ongoing research. The repository is private for now and will be released when the work is complete.
 
-Paper: [`paper/main_nejlt.tex`](paper/main_nejlt.tex) (NEJLT style; XeLaTeX), the version submitted to the Northern
-European Journal of Language Technology (no fees; anonymous review). [`paper/main.tex`](paper/main.tex) (TMLR style,
-preprint mode) is the source of the named preprint (Preprints.org; `paper/preprint.pdf`) and is kept unchanged while NEJLT
-reviews the paper. TMLR
-desk-rejected the paper on 2026-11-08 (D-095).
-Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
+Paper: [`paper/main.tex`](paper/main.tex) (TMLR style, preprint mode; XeLaTeX) is the source of the preprint
+(Preprints.org). The journal target is PLOS ONE (D-096); TMLR desk-rejected the paper on 2026-11-08 (D-095), and the
+NEJLT conversion [`paper/main_nejlt.tex`](paper/main_nejlt.tex) is kept but not submitted.
 
 ## Abstract
 
