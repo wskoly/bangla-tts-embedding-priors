@@ -9,8 +9,11 @@ Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-
 
 Status: ongoing research. The repository is private for now and will be released when the work is complete.
 
-Paper draft: [`paper/main.tex`](paper/main.tex) (TMLR style, preprint mode; XeLaTeX). Plan: preprint on TechRxiv
-(no endorsement needed), then submission to TMLR (no fees; anonymous mode of the same source).
+Paper: [`paper/main_nejlt.tex`](paper/main_nejlt.tex) (NEJLT style; XeLaTeX), the version submitted to the Northern
+European Journal of Language Technology (no fees; anonymous review). [`paper/main.tex`](paper/main.tex) (TMLR style,
+preprint mode) is the source of the named preprint (Preprints.org; `paper/preprint.pdf`) and is kept unchanged while NEJLT
+reviews the paper. TMLR
+desk-rejected the paper on 2026-11-08 (D-095).
 Decision log (every choice, in order, with reasons): [`docs/decisions.md`](docs/decisions.md).
 
 ## Abstract
@@ -176,7 +179,8 @@ Plans: `docs/C3_analysis_plan.md`, `docs/C1_analysis_plan.md`, `docs/C5_analysis
 python tools/paper_numbers.py    # recompute every number; fails if any differs from the frozen reports
 python tools/paper_figs.py       # figures at print size
 python tools/paper_transcripts.py  # appendix table of example transcripts (paper/transcripts.tex)
-cd paper && latexmk main.tex     # XeLaTeX + BibTeX via paper/latexmkrc (also tectonic or Overleaf)
+cd paper && latexmk main_nejlt.tex  # NEJLT version: XeLaTeX + BibTeX via paper/latexmkrc
+cd paper && latexmk main.tex     # TechRxiv preprint (TMLR style)
 ```
 
 `\usepackage[preprint]{tmlr}` names the authors (the TechRxiv PDF). For the TMLR submission, switch to
@@ -219,7 +223,14 @@ rerunning `build_samples_page.py` overwrites those additions. The natural-speech
 - After the DOI exists, fill the preprint link on the sample page and in this README, and add the link to the
   paper's availability section (TechRxiv version only).
 
-**TMLR submission** (no fees; double-blind on OpenReview):
+**NEJLT submission** (no fees; anonymous review; rolling, via nejlt.ep.liu.se):
+- Build `paper/main_nejlt.pdf` with `\usepackage{nejlt}` (the default: "Anonymous authors", line numbers,
+  confidential footer, no author names in the PDF metadata). `\usepackage[final]{nejlt}` is for the camera-ready.
+- Submit as an NLP engineering experiment paper. Do not publish, promote or update the TechRxiv preprint while the
+  paper is under review, and do not submit it elsewhere in parallel.
+- A rejection bars resubmission to NEJLT for 12 months; a paper must reach "minor edits" by the second cycle.
+
+**TMLR submission** (desk-rejected 2026-11-08, D-095; kept for reference):
 - Both authors need complete, active OpenReview profiles; create them early (profiles without an institutional
   email may wait for moderation).
 - Switch to `\usepackage{tmlr}` and rebuild: authors become "Anonymous authors", the header reads "Under review",

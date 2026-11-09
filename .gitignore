@@ -14,8 +14,8 @@ __pycache__/
 listening/listening_test.html
 listening/stimuli_map.json
 
-# compiled paper (XeLaTeX build)
-paper/main.pdf
+# compiled paper (XeLaTeX builds, including named PDFs kept locally)
+paper/*.pdf
 
 # LaTeX build by-products
 paper/*.aux
