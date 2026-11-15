@@ -11,6 +11,8 @@ Preprint: https://doi.org/10.20944/preprints202611.0988.v1
 
 Audio samples: https://wskoly.github.io/bangla-tts-embedding-priors/ (built from the `gh-pages` branch).
 
+Run outputs (per-sentence ASR transcripts and CER of all 110 runs): https://doi.org/10.5281/zenodo.24244075
+
 ## Abstract
 
 Character-level text-to-speech (TTS) models pretrained on Latin-script data are usually adapted to a new language by
@@ -78,7 +80,8 @@ data/derived/     small tracked metadata (manifests, splits, indexes, ASR floors
 ```
 
 Not in git (large or regenerable): `data/raw/`, all `*.wav`, and `runs/` (checkpoints, generated audio, per-run
-evaluation files).
+evaluation files). The per-run evaluation files are on Zenodo (https://doi.org/10.5281/zenodo.24244075); unpack the archive so that its `runs/`
+folder sits at the repository root.
 
 ## Replication
 
@@ -176,7 +179,9 @@ python tools/paper_transcripts.py  # example transcripts table (paper/transcript
 ```
 
 `paper_numbers.py` reads the per-run evaluation files under `runs/` and writes `paper/numbers.tex` (one macro per
-number) and `paper/numbers.json`. Running it on our run outputs reproduces the tracked `paper/numbers.tex` exactly.
+number) and `paper/numbers.json`. Running it on the run outputs from Zenodo reproduces the tracked
+`paper/numbers.tex` exactly; so do the analysis scripts in section 4 for their reports. On a Windows console, set
+`PYTHONUTF8=1` first: the scripts print non-ASCII symbols such as Δ.
 
 ## Known limitations
 
