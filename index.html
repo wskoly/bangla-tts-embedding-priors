@@ -163,7 +163,7 @@ rel="noopener" aria-label="ORCID record of Wahid Sadique Koly"><svg viewBox="0 0
 rel="noopener" aria-label="ORCID record of Homaira Adiba"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#A6CE39"/><path fill="#fff" d="M8.3 17.6H6.8V7.2h1.5v10.4zm2.1-10.4h4c3.8 0 5.5 2.7 5.5 5.2 0 2.7-2.1 5.2-5.5 5.2h-4V7.2zm1.5 9.1h2.4c3.4 0 4.1-2.6 4.1-3.9 0-2.1-1.3-3.9-4.2-3.9h-2.3v7.8zM7.6 4.6c.6 0 1 .5 1 1s-.4 1-1 1-1-.5-1-1 .4-1 1-1z"/></svg></a></span>
 <span class="aff">Independent Researcher</span></li>
 </ul>
-<p class="status">Preprint link: forthcoming · Code, configurations and analysis plans: <a href="https://github.com/wskoly/bangla-tts-embedding-priors">github.com/wskoly/bangla-tts-embedding-priors</a></p>
+<p class="status">Preprint: <a href="https://doi.org/10.20944/preprints202611.0988.v1">doi.org/10.20944/preprints202611.0988.v1</a> · Code, configurations and analysis plans: <a href="https://github.com/wskoly/bangla-tts-embedding-priors">github.com/wskoly/bangla-tts-embedding-priors</a></p>
 <div class="tldr"><h2>Key findings</h2><ol>
 <li><b>Pretrained letters carry sound knowledge, in this model and budget.</b> On identical phonemic Latin text, reusing F5-TTS's pretrained
 character embeddings lowers CER by 22.0 percentage points against freshly initialized ones; assigning the same pretrained
@@ -175,11 +175,14 @@ corpus of a different Bangla variety, and, where tested, the directions hold acr
 the effect sizes depend strongly on that draw. The results concern adaptation under a limited budget (3,000 updates).</li>
 </ol></div>
 <details><summary>Abstract</summary><p>Character-level text-to-speech (TTS) models pretrained on Latin-script data are usually adapted to a new language by adding its characters to the vocabulary. We ask why this works poorly for Bangla, an abugida, when F5-TTS is fine-tuned on one hour of speech for 3,000 updates: native Bengali characters give a character error rate (CER) of 67.96%, under an ASR model that scores 1.93% on real recordings. Controlled input representations separate two factors. On identical phonemic Latin text, pretrained embedding rows lower CER by 22.04 percentage points (pp) relative to freshly initialized rows, while assigning the same rows to the wrong sounds raises it by 51.53 pp. With fresh rows, a lossless re-encoding of Bengali text (explicit inherent vowel, merged vowel forms, split aspirates) lowers CER by 47.56 pp, and pretrained rows help this restructured encoding less than a standard transliteration. All five tests specified before the runs replicate on a second corpus of another Bangla variety, and, where tested, the directions hold across three random draws of the new embeddings; the effect sizes, however, vary strongly with the draw. In an exploratory run with five times more updates, the gap between the two Latin representations shrinks to 0.54 pp, so the findings concern adaptation under a limited training budget.</p></details>
-<details class="bib"><summary>Cite</summary><button class="copy" type="button" id="copybib">Copy</button><pre id="bibtex">@misc{koly2026embeddingpriors,
-  title  = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
-  author = {Koly, Wahid Sadique and Adiba, Homaira},
-  year   = {2026},
-  note   = {Preprint}
+<details class="bib"><summary>Cite</summary><button class="copy" type="button" id="copybib">Copy</button><pre id="bibtex">@article{koly2026embeddingpriors,
+  title   = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
+  author  = {Koly, Wahid Sadique and Adiba, Homaira},
+  journal = {Preprints},
+  year    = {2026},
+  doi     = {10.20944/preprints202611.0988.v1},
+  url     = {https://doi.org/10.20944/preprints202611.0988.v1},
+  note    = {Preprint}
 }</pre></details>
 </header>
 <p class="lede">This page lets you hear the systems compared in the paper. F5-TTS v1 Base is fine-tuned on about one hour
