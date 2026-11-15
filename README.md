@@ -7,6 +7,8 @@ input symbols have pretrained embedding rows, and (ii) the structure of the Bang
 Authors: Wahid Sadique Koly ([ORCID 0000-0001-8869-9183](https://orcid.org/0000-0001-8869-9183)) and Homaira Adiba
 ([ORCID 0000-0001-5285-9448](https://orcid.org/0000-0001-5285-9448)), independent researchers.
 
+Preprint: https://doi.org/10.20944/preprints202611.0988.v1
+
 Audio samples: https://wskoly.github.io/bangla-tts-embedding-priors/ (built from the `gh-pages` branch).
 
 ## Abstract
@@ -194,11 +196,14 @@ number) and `paper/numbers.json`. Running it on our run outputs reproduces the t
 ## Citation
 
 ```bibtex
-@misc{koly2026embeddingpriors,
-  title  = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
-  author = {Koly, Wahid Sadique and Adiba, Homaira},
-  year   = {2026},
-  note   = {Preprint}
+@article{koly2026embeddingpriors,
+  title   = {Character Embedding Priors and Script Structure in Low-Resource Bangla Text-to-Speech Adaptation},
+  author  = {Koly, Wahid Sadique and Adiba, Homaira},
+  journal = {Preprints},
+  year    = {2026},
+  doi     = {10.20944/preprints202611.0988.v1},
+  url     = {https://doi.org/10.20944/preprints202611.0988.v1},
+  note    = {Preprint}
 }
 ```
 

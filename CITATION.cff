@@ -30,4 +30,7 @@ preferred-citation:
       given-names: Homaira
       orcid: "https://orcid.org/0000-0001-5285-9448"
   year: 2026
-  notes: "Preprint; DOI to be added when issued."
+  journal: "Preprints"
+  month: 11
+  doi: "10.20944/preprints202611.0988.v1"
+  url: "https://doi.org/10.20944/preprints202611.0988.v1"
